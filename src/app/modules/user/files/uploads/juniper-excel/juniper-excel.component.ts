@@ -17,8 +17,8 @@ import { AccordionModule } from 'primeng/accordion';
 import * as XLSX from 'xlsx';
 
 export interface FileList {
-  name: string,
-  uploadedDate: string
+  fileName: string,
+  created: string
 }
 
 export interface FileStatus {
@@ -265,7 +265,7 @@ loading: boolean = false;
   
 
   loadUploadedFiles(): void {
-    this.fileService.getAllFiles().subscribe({
+    this.fileService.getAllFiles("Created","OK",true,0,5).subscribe({
       next: (response) => {
         this.fileList = response.data;
       },

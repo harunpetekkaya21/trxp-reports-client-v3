@@ -1,0 +1,9 @@
+{
+    "/api": {
+      "target": "https://trixpo-reports-api-v2-c9e4afd8ahejetcn.canadacentral-01.azurewebsites.net",
+      "secure": true,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+  

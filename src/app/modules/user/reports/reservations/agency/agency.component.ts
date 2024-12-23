@@ -69,7 +69,7 @@ export class AgencyComponent {
 
   ngOnInit(): void {
     this.initChart();
-    this.getLastFileDate();
+    
     this.loadInitialReservations();
   }
   initChart(): void {
@@ -184,29 +184,6 @@ export class AgencyComponent {
     
   }
 
-  getLastFileDate() {
-    this.fileService.getLastFile().subscribe({
-      next: (response) => {
-
-        this.fileReportDate = this.formatDate(response.data.createdDate);
-        
-      },
-      error: (error) => {
-
-      }
-    })
-  }
-
-  formatDate(dateString: string): Date {
-    const date = new Date(dateString);
-    const day = date.getDate(); // Gün
-    const month = date.getMonth(); // Ay (0 tabanlı)
-    const year = date.getFullYear(); // Yıl
-    const hours=date.getHours();
-    const minute = date.getMinutes();
-    //return `${day}.${month}.${year}`;
-    return new Date(year, month, day,hours,minute);
-  }
 
 
 }

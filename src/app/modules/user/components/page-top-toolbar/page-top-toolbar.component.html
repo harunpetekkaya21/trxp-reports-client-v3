@@ -6,16 +6,26 @@
                     <div class="label-group">
                         <img [pTooltip]="fileReportDateTooltip" style="width: 21px; height: 21px; margin-right: 4px;"
                             alt="dropdown icon" src="/assets/icons/icon-info.png">
-                        <label for="reportDate" class="font-bold block">Raporlarin Son Yuklenme Tarihi</label>
+                        <label for="reportDate" class="font-bold block">Juniper Rezervasyon Son Yuklenme Tarihi</label>
 
                     </div>
-                    <p-calendar  [disabled]="true"  [(ngModel)]="fileReportDate" [iconDisplay]="'input'" [(ngModel)]="fileReportDate" [showIcon]="true" inputId="reportDate"></p-calendar>
+                    <p-calendar  [disabled]="true"  [(ngModel)]="JuniperFileReportDate" [iconDisplay]="'input'" [(ngModel)]="JuniperFileReportDate" [showIcon]="true" inputId="reportDate"></p-calendar>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-group">
+                        <img [pTooltip]="fileReportDateTooltip" style="width: 21px; height: 21px; margin-right: 4px;"
+                            alt="dropdown icon" src="/assets/icons/icon-info.png">
+                        <label for="reportDate" class="font-bold block">Sejour Rezervasyon Son Yuklenme Tarihi</label>
+
+                    </div>
+                    <p-calendar  [disabled]="true"  [(ngModel)]="SejourFileReportDate" [iconDisplay]="'input'" [(ngModel)]="SejourFileReportDate" [showIcon]="true" inputId="reportDate"></p-calendar>
                 </div>
                 
             </div>
 
             <div class="p-toolbar-group-right right-group">
-                Provider : Juniper
+                Provider : {{providerLabel}}
             </div>
         </p-toolbar>
     </div>

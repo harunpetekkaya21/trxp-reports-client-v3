@@ -19,6 +19,7 @@ import { GroupBySupplierDto } from '../../../../../core/models/supplier/GroupByS
 import { SupplierService } from '../../../../../core/services/api/supplier.service';
 import { GroupBySupplierResponse } from '../../../../../core/models/supplier/GroupBySupplierResponse';
 import { FileService } from '../../../../../core/services/api/file.service';
+import { PageTopToolbarComponent } from '../../../components/page-top-toolbar/page-top-toolbar.component';
 
 
 @Component({
@@ -35,7 +36,8 @@ import { FileService } from '../../../../../core/services/api/file.service';
       ButtonModule,
       PaginatorModule,
       CalendarModule,
-      ChartModule,],
+      ChartModule,
+      PageTopToolbarComponent],
   templateUrl: './supplier.component.html',
   styleUrl: './supplier.component.scss',
   providers: [MessageService], // MessageService Toast için gerekli
@@ -65,7 +67,7 @@ export class SupplierComponent {
 
   ngOnInit(): void {
     this.initChart();
-    this.getLastFileDate();
+
     this.loadInitialReservations();
   }
   initChart(): void {
@@ -179,28 +181,6 @@ export class SupplierComponent {
     this.chartData.datasets[2].data = data.map((d) => d.totalNumberOfNights);
   }
 
-  getLastFileDate() {
-    this.fileService.getLastFile().subscribe({
-      next: (response) => {
-
-        this.fileReportDate = this.formatDate(response.data.createdDate);
-      },
-      error: (error) => {
-
-      }
-    })
-  }
-
-  formatDate(dateString: string): Date {
-    const date = new Date(dateString);
-    const day = date.getDate(); // Gün
-    const month = date.getMonth(); // Ay (0 tabanlı)
-    const year = date.getFullYear(); // Yıl
-    const hours=date.getHours();
-    const minute = date.getMinutes();
-    //return `${day}.${month}.${year}`;
-    return new Date(year, month, day,hours,minute);
-  }
 
 
 }
