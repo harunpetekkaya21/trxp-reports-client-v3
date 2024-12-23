@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const ADMIN_ROUTES: Routes = [
+export const USER_ROUTES: Routes = [
     {
       path: '',
       loadComponent: () =>
