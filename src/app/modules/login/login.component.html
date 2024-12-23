@@ -1,0 +1,42 @@
+<!-- src/app/components/login/login.component.html -->
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo-container">
+      <img src="../../../assets/logos/logo-dark.svg" alt="Şirket Logosu" class="logo">
+    </div>
+    <h2 class="title">Login</h2>
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Kullanici Adi</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="username"
+          required
+          class="form-control"
+          placeholder="Kullanici adinizi girin"
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Şifre</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          class="form-control"
+          placeholder="Şifrenizi girin"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">
+        Giriş Yap
+      </button>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+</div>

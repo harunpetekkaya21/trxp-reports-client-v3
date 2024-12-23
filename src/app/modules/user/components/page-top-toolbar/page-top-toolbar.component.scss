@@ -1,0 +1,33 @@
+// .p-toolbar-group-right {
+//     display: flex;
+//     justify-content: flex-end;
+//     align-items: center;
+//   }
+  
+//   .right-group {
+//     margin-right: 10px;
+//   }
+  
+//   .left-group {
+//     margin-left: 10px;
+//   }
+
+  //Toolbar
+.left-group {
+    display: flex;
+    align-items: flex-start; /* Elemanları üst hizala */
+    gap: 16px; /* Form grupları arasında boşluk */
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column; /* Label ve Calendar dikey sırada */
+    align-items: flex-start; /* Sol hizalama */
+    gap: 8px; /* Label+img ile Calendar arasında boşluk */
+  }
+  
+  .label-group {
+    display: flex;
+    align-items: center; /* Label ve img yatay hizalama */
+    gap: 4px; /* Label ile img arasında boşluk */
+  }

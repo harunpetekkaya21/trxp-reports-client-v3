@@ -1,0 +1,91 @@
+/* Menü öğesinin metin ve arka plan rengini değiştir */
+
+.layout-menuitem-text {
+   // color: inherit; /* Metin rengini üst öğeden al */
+   color: var(--text-color)!important;
+   font-weight: 500;
+   font-size: 18px;
+
+    // &:hover {
+    //   color: #15f700 !important; /* Hover durumunda metin rengi değişir */
+    // }
+  }
+
+  :host ::ng-deep .p-ripple {
+   
+        
+
+        &:hover{
+            //background-color: #332717 !important;
+        }
+    
+  }
+
+  .layout-menuitem-icon {
+    color: var(--primary-color) !important; /* İkon rengini normal durumda ayarlayalım */
+    
+    
+    // .layout-menuitem:hover & {
+    //   color: #ffffff !important; /* Hover durumunda ikon beyaz olur */
+    // }
+  }
+  
+
+// .layout-menuitem {
+//     background-color: #f0f0f0 !important; /* Normal durumda arka plan rengi */
+//     color: #331717 !important; /* Normal metin rengi */
+    
+//     /* Menü öğesinin metin rengi ve hover durumları */
+//     .layout-menuitem-text {
+//       color: inherit; /* Metin rengini üst öğeden al */
+      
+//       &:hover {
+//         color: #f70000 !important; /* Hover durumunda metin rengi değişir */
+//       }
+//     }
+  
+//     /* Hover durumunda arka plan rengini değiştir */
+//     &:hover {
+//       background-color: #007BFF !important; /* Hover rengi (örneğin mavi) */
+      
+//       .layout-menuitem-text {
+//         color: #fff !important; /* Hover durumunda metin beyaz olur */
+//       }
+//     }
+  
+//     /* Aktif durumda arka plan rengini değiştirme */
+//     &.active-route {
+//       background-color: #a7282e !important; /* Aktif menü öğesi için arka plan (örneğin yeşil) */
+      
+//       .layout-menuitem-text {
+//         color: #fff !important; /* Aktif durumda metin beyaz olur */
+//       }
+//     }
+  
+//     /* Alt menü öğeleri için */
+//     &.layout-menuitem-items {
+//       background-color: #e0e0e0 !important; /* Alt menü öğesi arka plan rengi */
+      
+//       .layout-menuitem {
+//         background-color: #e9ecef !important; /* Alt menü öğesi normal arka plan */
+        
+//         &:hover {
+//           background-color: #0069D9 !important; /* Alt menü öğesi hover rengi */
+          
+//           .layout-menuitem-text {
+//             color: #fff !important; /* Alt menü öğesi hover metin rengi */
+//           }
+//         }
+        
+//         &.active-route {
+//           background-color: #17A2B8 !important; /* Alt menü öğesi aktif arka plan */
+          
+//           .layout-menuitem-text {
+//             color: #fff !important; /* Aktif durumda alt menü metni beyaz */
+//           }
+//         }
+//       }
+//     }
+//   }
+  
+  /* Menü öğesinin icon stilini değiştirme */

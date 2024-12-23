@@ -1,0 +1,82 @@
+/* src/app/components/login/login.component.css */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5; /* Açık gri arka plan */
+  padding: 10px;
+}
+
+.login-card {
+  background-color: #ffffff; /* Beyaz kart */
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  max-width: 150px;
+  height: auto;
+}
+
+.title {
+  text-align: center;
+  color: #04598c; /* Mavi başlık */
+  margin-bottom: 30px;
+}
+
+.login-form .form-group {
+  margin-bottom: 20px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333333;
+}
+
+.login-form .form-control {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.login-form .form-control:focus {
+  border-color: #04598c; /* Mavi odak */
+  outline: none;
+}
+
+.btn-primary {
+  background-color: #04598c; /* Mavi buton */
+  border-color: #04598c;
+  color: white;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #034b6f; /* Daha koyu mavi */
+  border-color: #034b6f;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.error-message {
+  margin-top: 15px;
+  color: #f29f05; /* Turuncu hata mesajı */
+  text-align: center;
+  font-weight: bold;
+}

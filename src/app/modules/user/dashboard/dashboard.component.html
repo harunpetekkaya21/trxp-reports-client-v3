@@ -1,0 +1,96 @@
+
+
+<div class="grid p-fluid">
+    <!--  Reservasyon Özeti -->
+    <div class="col-12 lg:col-6">
+      <div class="card reservation-summary-card">
+        <!-- <h5 class="reservation-summary-title">Rezervasyon Özeti</h5> -->
+        <div class="reservation-summary-grid">
+          <!-- Toplam Rezervasyon -->
+          <div class="summary-box">
+            <i class="pi pi-calendar summary-icon"></i>
+            <span class="summary-label">Toplam Rezervasyon</span>
+            <span class="summary-value">{{ totalReservations | number : '1.0-2' }}</span>
+          </div>
+          <!-- Toplam Satış -->
+          <div class="summary-box">
+            <i class="pi pi-money-bill summary-icon"></i>
+            <span class="summary-label">Toplam Satış</span>
+            <span class="summary-value">{{ totalSalesPrice | number : '1.0-2' }} €</span>
+          </div>
+          <!-- Toplam Net Maliyet -->
+          <div class="summary-box">
+            <i class="pi pi-chart-bar summary-icon"></i>
+            <span class="summary-label">Toplam Net Maliyet</span>
+            <span class="summary-value">{{ totalNetCostPrice | number : '1.0-2' }} €</span>
+          </div>
+          <!-- Toplam Net Kâr -->
+          <div class="summary-box">
+            <i class="pi pi-chart-line summary-icon"></i>
+            <span class="summary-label">Toplam Net Kâr</span>
+            <span class="summary-value">{{ (totalSalesPrice - totalNetCostPrice) | number : '1.0-2' }} €</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+    
+    
+  
+    <!-- Sağ Üst: Reservasyon Özeti Pie Chart -->
+    <div class="col-12 lg:col-6">
+      <div class="card equal-height">
+        <!-- <h5>Reservasyon Ozeti </h5> -->
+        <div class="chart-container">
+          <p-chart type="pie" [data]="reservationPieData" [options]="pieOptions"></p-chart> 
+        </div>
+      </div>
+    </div>
+  
+    <!-- Sol Alt: Aylık Satışlar Badge Listesi -->
+      <div class="col-12 lg:col-6">
+        <div class="card equal-height custom-card">
+          <!-- <h5 class="text-center custom-title">Aylara Göre Satış Özeti</h5> -->
+          <div class="grid">
+            <div
+              class="col-12 sm:col-6 md:col-4 lg:col-3 month-card"
+              *ngFor="let month of monthlySales"
+            >
+              <div class="month-container">
+                <div class="month-header">{{ month.month }} - {{ month.year }}</div>
+                <div class="month-details">
+                  <div class="detail-item">
+                    <span>Satış:</span>
+                    <span>{{ month.totalSalesPrice | number : '1.0-2' }} €</span>
+                  </div>
+                  <div class="detail-item">
+                    <span>Maliyet:</span>
+                    <span>{{ month.totalNetCostPrice | number : '1.0-2' }} €</span>
+                  </div>
+                  <div class="detail-item">
+                    <span>Kâr:</span>
+                    <span>
+                      {{ (month.totalSalesPrice - month.totalNetCostPrice) | number : '1.0-2' }}
+                      €
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+  
+    <!-- Sağ Alt: Aylık Satışlar Bar Chart -->
+    <div class="col-12 lg:col-6">
+      <div class="card equal-height">
+        <!-- <h5>Aylik Ozet</h5> -->
+        <p-chart type="bar" [data]="barData" [options]="barOptions"></p-chart>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,136 @@
+
+<div class="grid p-fluid">
+    <div class="col-12" style="display: flex; align-items: center; gap: 8px;">
+        <img style="width: 28px; height: 28px;" alt="dropdown icon" src="/assets/icons/icon-info.png">
+        <span>Bu sayfada butun rezervasyonlar reservasyon tarihlerine gore gruplandirilarak raporlanmistir.</span>
+    </div>
+
+</div>
+
+
+
+
+<div class="grid p-fluid">
+
+    <div class="col-12">
+        <div class="card">
+            <div *ngIf="(loadingService.loading$ | async ); else chartTemplate" class="chart-skeleton-wrapper">
+                <div class="chart-skeleton">
+                    <div class="skeleton-bar" *ngFor="let _ of skeletonBars"></div>
+                </div>
+            </div>
+            <ng-template #chartTemplate>
+                <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+<div class="grid p-fluid">
+    <div class="col-12">
+        <div class="card">
+
+            <!-- <div class="mb-3">
+                <p-button 
+                    type="button" 
+                    icon="pi pi-chevron-left" 
+                    (onClick)="prev()" 
+                    [disabled]="isFirstPage()" 
+                    styleClass="p-button-text" />
+                <p-button 
+                    type="button"
+                    icon="pi pi-refresh" 
+                    (onClick)="reset()" 
+                    styleClass="p-button-text" />
+                <p-button 
+                    type="button" 
+                    icon="pi pi-chevron-right" 
+                    (onClick)="next()" 
+                    [disabled]="isLastPage()" 
+                    styleClass="p-button-text" />
+            </div> -->
+            <div class="card">
+
+
+                <p-table [lazy]="true" (onLazyLoad)="loadReservations($event)" [loading]="(loadingService.loading$ | async )"
+                    [value]="reservations" [paginator]="true" [rows]="rows" [first]="first"
+                    [rowHover]="true" [showLoader]="false" [totalRecords]="totalRecords" [showCurrentPageReport]="true"
+                    [tableStyle]="{ 'min-width': '50rem' }"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [rowsPerPageOptions]="[5,10, 25, 50]">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width:10%">Reservation Date</th>
+                           
+                            <th style="width:8%">Total Sales Price</th>
+
+                            <th style="width:8%">Total Net Cost Price</th>
+
+                            <th style="width:8%">Total Reservations</th>
+                        
+                        </tr>
+                    </ng-template>
+
+
+                    <ng-template pTemplate="body" let-item>
+
+                       
+
+                        <tr *ngIf="!(loadingService.loading$ | async ) && reservations.length>0; else skeletonRow">
+                            
+                            <td>{{ item.reservationDate | date: 'dd-MM-yyyy'}}</td>
+                          
+                            <td>{{ item.totalSalesPrice | number : '1.0-2'}}€</td>
+
+                            <td>{{ item.totalNetCostPrice | number : '1.0-2'}}€</td>
+
+                            <td>{{ item.totalReservations }}</td>
+                           
+                        </tr>
+                    </ng-template>
+
+                    <ng-template #skeletonRow>
+                        <tr>
+                            <td><p-skeleton width="100%"></p-skeleton></td>
+                            <td><p-skeleton width="100%"></p-skeleton></td>
+                            <td><p-skeleton width="100%"></p-skeleton></td>
+                            <td><p-skeleton width="100%"></p-skeleton></td>
+
+                    </ng-template>
+
+
+                    <ng-template pTemplate="paginatorleft">
+                        <p-button type="button" icon="pi pi-plus" styleClass="p-button-text" />
+                    </ng-template>
+                    <ng-template pTemplate="paginatorright">
+                        <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text" />
+                    </ng-template>
+                </p-table>
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

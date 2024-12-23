@@ -1,0 +1,93 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img src="assets/logos/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-light'}}.svg"
+            alt="logo">
+        <span>Reports</span>
+    </a>
+
+
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+
+
+    <!-- 3 Nokta -->
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
+        (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+
+
+    <div #topbarmenu class="layout-topbar-menu"
+        [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+
+        <!-- <p-menubar [model]="items">
+      
+            <ng-template pTemplate="item" let-item let-root="root">
+                <a routerLink="{{item.route}}" pRipple class="flex align-items-center p-menuitem-link">
+                    <span [class]="item.icon"></span>
+                    <span class="ml-2">{{ item.label }}</span>
+                    <p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />
+                    <span *ngIf="item.shortcut" class=" ml-auto border-1 surface-border border-round surface-100 text-xs p-1 ">{{ item.shortcut }}</span>
+                    <i *ngIf="item.items" [ngClass]="['pi', root ? 'pi-angle-down ml-2' : 'pi-angle-right ml-auto']"></i>
+                </a>
+            </ng-template>
+          
+        </p-menubar> -->
+
+        <p-dropdown [options]="providers" [(ngModel)]="selectedProvider" placeholder="Select Provider"
+            (onChange)="onProviderChange($event)">
+        </p-dropdown>
+
+        <div *ngIf="loggedIn$ | async"> 
+            <button (click)="logout()" class="p-link layout-topbar-button">
+                <i class="pi pi-sign-out"></i>
+                <span>Cikis Yap</span>
+            </button> 
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- <p-menubar [model]="items">
+            
+    <ng-template pTemplate="item" let-item>
+        sab menu -->
+<!-- <ng-container *ngIf="item.route; else urlRef">
+            <a [routerLink]="item.route" class="p-menuitem-link">
+                <span [class]="item.icon"></span>
+                <span class="ml-2">{{ item.label }}</span>
+            </a>
+        </ng-container> -->
+<!-- sab menu -->
+
+<!-- without sublink -->
+<!-- <ng-template #urlRef>
+            <a *ngIf="item.url; else noLink" [href]="item.url" class="p-menuitem-link">
+                <span [class]="item.icon"></span>
+                <span class="ml-2">{{ item.label }}</span>
+            </a>
+        </ng-template> -->
+<!-- without sublink -->
+<!-- <ng-template #noLink>
+            <div class="p-menuitem-link">
+                <span [class]="item.icon"></span>
+                <span class="ml-2">{{ item.label }}</span>
+                <span class="pi pi-fw pi-angle-down ml-2"></span>
+            </div>
+        </ng-template>
+    </ng-template>
+</p-menubar> -->

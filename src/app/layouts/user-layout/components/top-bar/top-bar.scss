@@ -1,0 +1,66 @@
+
+:host ::ng-deep .p-menubar {
+    background-color: #f8f9fa; /* Arka plan rengi */
+    border: none; /* İsteğe bağlı olarak kenarlığı kaldırın */
+}
+
+
+:host ::ng-deep .p-menubar .p-menuitem-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color:  #333;
+}
+
+:host ::ng-deep .p-menubar .p-menuitem-link:hover {
+    border-radius: 5px;
+    background-color: #04598c;
+    color:  #fff;
+}
+
+:host ::ng-deep .p-badge {
+    //background-color:  #d90000;
+    color: #ffffff;
+}
+:host ::ng-deep .p-menubar .p-submenu {
+    width: 500px; /* Varsayılan genişlik */
+}
+
+:host ::ng-deep .p-menubar .p-menuitem-link:hover + .p-submenu {
+    width: 550px !important; /* Hover sırasında alt menü genişliği */
+    transition: width 0.3s ease; /* Geçiş animasyonu (isteğe bağlı) */
+}
+
+:host ::ng-deep .p-menuitem-link .shortcut-class {
+    margin-left: 50px; /* Shortcut ile önceki metin arasındaki boşluğu ayarlar */
+}
+
+
+
+/* p-menubar arka plan rengini değiştirme */
+::ng-deep .p-menubar {
+    background-color: #ffffff !important; /* İstediğiniz arka plan rengini buraya yazın */
+  }
+  
+  /* Menü öğelerinin yazı boyutunu değiştirme */
+  ::ng-deep .p-menuitem-link {
+    font-size: 18px !important; /* İstediğiniz yazı boyutunu buraya yazın */
+    font-weight: 500 !important;
+    
+  }
+  
+  /* Menü öğelerinin üzerine gelindiğinde stil değiştirme */
+  ::ng-deep .p-menuitem-link:hover {
+    background-color: var(--primary-color) !important; /* Hover (üzerine gelindiğinde) arka plan rengini değiştirebilirsiniz */
+    color: #FFFFFF !important; /* Hover yazı rengini değiştirebilirsiniz */
+  }
+  
+
+ .layout-topbar-logo {
+    
+      span {
+        color: var(--text-logo-color) !important; // light tema rengi
+      }
+    
+  }

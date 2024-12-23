@@ -1,0 +1,104 @@
+.skeleton-wrapper {
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .skeleton-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .skeleton-table th,
+  .skeleton-table td {
+    padding: 0.7rem; /* Daha geniş hücre boşluğu */
+    text-align: left;
+  }
+  
+  .skeleton-table th {
+    background-color: #f3f3f3;
+  }
+  
+  .skeleton-table td {
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+
+
+  .chart-skeleton-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    background-color: #f3f4f6; /* Grafik alanını belirginleştir */
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .chart-skeleton {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 300px; /* Çubukların maksimum yüksekliği */
+    width: 90%; /* Grafik genişliğini temsil eder */
+  }
+  
+  .skeleton-bar {
+    width: 6%; /* Çubuk genişliği */
+    height: calc(40% + 60px); /* Çubuk yüksekliği (rastgele bir görünüm için dinamik bir değer kullanabilirsiniz) */
+    background-color: #e0e0e0;
+    animation: pulse 1.5s infinite;
+    border-radius: 4px;
+  }
+
+
+
+  :host ::ng-deep .p-toolbar{
+    background-color: white !important; /* Arka plan rengini değiştir */
+    border-radius: 15px;
+}
+
+
+
+
+
+img {
+  display: block;
+  width: 21px;
+  height: 21px;
+}
+
+:host ::ng-deep .p-inputswitch {
+  // width: 60px !important; /* Switch'in genişliği */
+  // height: 30px !important; /* Switch'in yüksekliği */
+}
+
+:host ::ng-deep .p-inputswitch-slider {
+  // width: 28px !important; /* Kaydırıcının genişliği */
+   height: 22px !important; /* Kaydırıcının yüksekliği */
+  top: 2px !important; /* Kaydırıcının dikey hizalaması */
+  left: 1px !important; /* Kaydırıcının sol hizalaması */
+ 
+}
+
+:host ::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background-color: #04598c !important; /* Kaydırıcı rengi (checked durumunda) */
+}
+
+:host ::ng-deep .p-inputswitch.p-inputswitch-checked {
+ 
+}
+
+
+  
+  /* Animasyon */
+  @keyframes pulse {
+    0% {
+      background-color: #e0e0e0;
+    }
+    50% {
+      background-color: #f0f0f0;
+    }
+    100% {
+      background-color: #e0e0e0;
+    }
+  }

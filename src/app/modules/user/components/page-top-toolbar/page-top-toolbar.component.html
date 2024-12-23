@@ -1,0 +1,22 @@
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap left-group">
+                <div class="form-group">
+                    <div class="label-group">
+                        <img [pTooltip]="fileReportDateTooltip" style="width: 21px; height: 21px; margin-right: 4px;"
+                            alt="dropdown icon" src="/assets/icons/icon-info.png">
+                        <label for="reportDate" class="font-bold block">Raporlarin Son Yuklenme Tarihi</label>
+
+                    </div>
+                    <p-calendar  [disabled]="true"  [(ngModel)]="fileReportDate" [iconDisplay]="'input'" [(ngModel)]="fileReportDate" [showIcon]="true" inputId="reportDate"></p-calendar>
+                </div>
+                
+            </div>
+
+            <div class="p-toolbar-group-right right-group">
+                Provider : Juniper
+            </div>
+        </p-toolbar>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+.spinner-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column; /* Dikey hizalama */
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Arka plan rengi */
+    z-index: 9999; /* Öncelikli görünüm */
+  }
+  
+  p-progressSpinner {
+    margin-bottom: 2rem; /* Spinner'ı yukarı kaydır */
+  }
+  
+  .progress-info {
+    text-align: center;
+    color: white; /* Yazı rengini beyaz yap */
+    font-size: 1.5rem; /* Yazı boyutu */
+    z-index: 9999; /* Spinner ile aynı öncelikte */
+  }
+  
