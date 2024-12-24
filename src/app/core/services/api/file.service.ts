@@ -63,7 +63,7 @@ export class FileService {
     const url = `${this.apiUrlUploadSejourExcelData}`;
 
     return this.http.post(url, data, { headers, params }).pipe(
-        timeout(60000), // 60 saniye zaman aşımı
+        timeout(200000), // 60 saniye zaman aşımı
         catchError((error) => {
             if (error.name === 'TimeoutError') {
                 console.error('API isteği zaman aşımına uğradı.');

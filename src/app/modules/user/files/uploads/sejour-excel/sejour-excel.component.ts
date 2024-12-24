@@ -77,7 +77,7 @@ export class SejourExcelComponent {
 
     this.readExcel(file)
       .then((data) => {
-        if (data.length > 200) {
+        if (data.length > 100) {
           this.messageService.add({
             severity: 'info',
             summary: 'Info',
@@ -105,7 +105,7 @@ export class SejourExcelComponent {
   }
 
   uploadInChunks(fileName: string, data: any[], isFirstChunk: boolean): void {
-    const chunkSize = 200; // Her chunk'ta gönderilecek veri miktarı
+    const chunkSize = 100; // Her chunk'ta gönderilecek veri miktarı
     this.totalChunks = Math.ceil(data.length / chunkSize); // Toplam chunk sayısını hesapla
     this.chunkIndex = 0; // İlk chunk'ı başlat
     this.sentDataCount = 0; // Gönderilen veri miktarını sıfırla
@@ -113,7 +113,7 @@ export class SejourExcelComponent {
     const uploadChunk = (chunk: any[], isFirst: boolean) => {
       this.loading = true; // Spinner'ı aç
       this.fileService.uploadSejourExcelData(fileName,isFirst, chunk)
-      .pipe(timeout(30000)) // 30 saniye zaman aşımı
+      .pipe(timeout(200000)) // 30 saniye zaman aşımı
       .subscribe({
         next: () => {
           this.chunkIndex++; // Gönderilen chunk sayısını artır
@@ -145,10 +145,9 @@ export class SejourExcelComponent {
             summary: 'Error',
             detail: `Parça ${this.chunkIndex + 1} yüklenemedi.`
           });
-        },
-        complete: () => {
           this.loading = false; 
-      }
+        }
+       
       });
     };
   
@@ -251,9 +250,10 @@ export class SejourExcelComponent {
 
 
   uploadToApi(fileName: string, data: any[]): void {
-    this.fileService.uploadSejourExcelData(fileName,true, data)
-    .pipe(timeout(30000)) // 30 saniye zaman aşımı
+    //this.fileService.uploadSejourExcelData(fileName,true, data)
+     // 30 saniye zaman aşımı
     this.fileService.uploadSejourExcelData(fileName, true, data)
+        .pipe(timeout(200000))
         .subscribe({
             next: () => {
                 this.messageService.add({ severity: 'success', summary: 'Başarılı', detail: 'Yükleme tamamlandı.' });
@@ -265,7 +265,7 @@ export class SejourExcelComponent {
                 this.loading = false; // Spinner'ı her durumda kapat
             }
         });
-        this.loading = false;
+       // this.loading = false;
   }
 
  convertExcelDate(excelSerialDate: number): Date {
