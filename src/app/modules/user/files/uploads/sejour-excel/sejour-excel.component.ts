@@ -16,6 +16,7 @@ import { AccordionModule } from 'primeng/accordion';
 import * as XLSX from 'xlsx';
 import { FileService } from '../../../../../core/services/api/file.service';
 import { FileListDTO } from '../../../../../core/models/file/file-list/FileListDTO';
+import { timeout } from 'rxjs';
 
 export interface FileList {
   name: string,
@@ -76,7 +77,7 @@ export class SejourExcelComponent {
 
     this.readExcel(file)
       .then((data) => {
-        if (data.length > 1000) {
+        if (data.length > 200) {
           this.messageService.add({
             severity: 'info',
             summary: 'Info',
@@ -104,14 +105,16 @@ export class SejourExcelComponent {
   }
 
   uploadInChunks(fileName: string, data: any[], isFirstChunk: boolean): void {
-    const chunkSize = 1000; // Her chunk'ta gönderilecek veri miktarı
+    const chunkSize = 200; // Her chunk'ta gönderilecek veri miktarı
     this.totalChunks = Math.ceil(data.length / chunkSize); // Toplam chunk sayısını hesapla
     this.chunkIndex = 0; // İlk chunk'ı başlat
     this.sentDataCount = 0; // Gönderilen veri miktarını sıfırla
   
     const uploadChunk = (chunk: any[], isFirst: boolean) => {
       this.loading = true; // Spinner'ı aç
-      this.fileService.uploadSejourExcelData(fileName,isFirst, chunk).subscribe({
+      this.fileService.uploadSejourExcelData(fileName,isFirst, chunk)
+      .pipe(timeout(30000)) // 30 saniye zaman aşımı
+      .subscribe({
         next: () => {
           this.chunkIndex++; // Gönderilen chunk sayısını artır
           this.sentDataCount += chunk.length; // Gönderilen veri sayısını artır
@@ -142,7 +145,10 @@ export class SejourExcelComponent {
             summary: 'Error',
             detail: `Parça ${this.chunkIndex + 1} yüklenemedi.`
           });
-        }
+        },
+        complete: () => {
+          this.loading = false; 
+      }
       });
     };
   
@@ -192,9 +198,14 @@ export class SejourExcelComponent {
            // Eksik kolon kontrolü
            const missingColumns = requiredColumns.filter(col => !headers.includes(col));
            if (missingColumns.length > 0) {
-             console.error("Missing columns:", missingColumns);
-             reject(new Error(`Missing required columns: ${missingColumns.join(", ")}`));
-             return;
+               const errorMessage = `Eksik kolonlar: ${missingColumns.join(', ')}`;
+               this.messageService.add({
+                   severity: 'error',
+                   summary: 'Eksik Kolon Hatası',
+                   detail: errorMessage
+               });
+               reject(new Error(errorMessage));
+               return;
            }
  
            // Boş satırları filtrele (başlık hariç)
@@ -240,36 +251,36 @@ export class SejourExcelComponent {
 
 
   uploadToApi(fileName: string, data: any[]): void {
-    this.fileService.uploadSejourExcelData(fileName,true, data).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Tüm veriler başarıyla yüklendi.'
+    this.fileService.uploadSejourExcelData(fileName,true, data)
+    .pipe(timeout(30000)) // 30 saniye zaman aşımı
+    this.fileService.uploadSejourExcelData(fileName, true, data)
+        .subscribe({
+            next: () => {
+                this.messageService.add({ severity: 'success', summary: 'Başarılı', detail: 'Yükleme tamamlandı.' });
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'error', summary: 'Hata', detail: err.message });
+            },
+            complete: () => {
+                this.loading = false; // Spinner'ı her durumda kapat
+            }
         });
-        this.loading = false; // Spinner durdur
-      },
-      error: (error) => {
-      
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.message
-        });
-        this.loading = false; // Spinner durdur
-      }
-    });
+        this.loading = false;
   }
 
  convertExcelDate(excelSerialDate: number): Date {
-     // Excel'in başlangıç tarihi: 1 Ocak 1900
-     const excelEpoch = new Date(Date.UTC(1900, 0, 1)); // UTC zaman diliminde 1 Ocak 1900
-     const days = Math.floor(excelSerialDate) - 2; // Excel tarihlerinde 1900 yılı için kayma (leap year bug)
-     const millisecondsPerDay = 24 * 60 * 60 * 1000; // Günlük milisaniye
-     const fractionalDay = excelSerialDate % 1; // Günün kesirli kısmı
-     const millisecondsForFractionalDay = fractionalDay * millisecondsPerDay;
- 
-     return new Date(excelEpoch.getTime() + days * millisecondsPerDay + millisecondsForFractionalDay);
+  try {
+    const excelEpoch = new Date(Date.UTC(1900, 0, 1));
+    const days = Math.floor(excelSerialDate) - 2; // Excel 1900 bug'ı
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const fractionalDay = excelSerialDate % 1; // Kesirli gün kısmı
+    const millisecondsForFractionalDay = fractionalDay * millisecondsPerDay;
+
+    return new Date(excelEpoch.getTime() + days * millisecondsPerDay + millisecondsForFractionalDay);
+} catch (error) {
+    console.error('Tarih dönüşüm hatası:', error);
+    return null;
+}
    }
  
  

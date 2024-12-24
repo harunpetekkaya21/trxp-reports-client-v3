@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { FileSingleRESPONSE } from '../../models/file/FileSingleRESPONSE';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError, timeout } from 'rxjs';
 import { FileListRESPONSE } from '../../models/file/file-list/FileListRESPONSE';
 import { environment } from '../../../../environments/environment';
 import { ErrorHandler } from '../../helpers/ErrorHandler';
@@ -64,7 +64,13 @@ export class FileService {
     const params = new HttpParams().set('fileName', fileName).set('isFirstChunk', isFirstChunk.toString());
     const url = `${this.apiUrlUploadSejourExcelData}`;
 
-    return this.http.post(url, data, {  params });
+    return this.http.post(url, data, {  params }).pipe(
+      timeout(30000), // 30 saniye zaman aşımı
+      catchError((error) => {
+          console.error('Timeout veya başka hata:', error);
+          return throwError(() => error);
+      })
+  );
   }
 
   uploadJuniperExcelData(fileName: string, isFirstChunk: boolean, data: any[]): Observable<any> {
