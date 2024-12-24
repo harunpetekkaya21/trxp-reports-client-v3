@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FileSingleRESPONSE } from '../../models/file/FileSingleRESPONSE';
 import { catchError, Observable, throwError, timeout } from 'rxjs';
 import { FileListRESPONSE } from '../../models/file/file-list/FileListRESPONSE';
@@ -58,20 +58,23 @@ export class FileService {
   //   return this.http.post(`${this.apiUrlUploadJuniperFile}`, formData);
   // }
   uploadSejourExcelData(fileName: string, isFirstChunk: boolean, data: any[]): Observable<any> {
-    //console.log(data);
-
-    
     const params = new HttpParams().set('fileName', fileName).set('isFirstChunk', isFirstChunk.toString());
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const url = `${this.apiUrlUploadSejourExcelData}`;
 
-    return this.http.post(url, data, {  params }).pipe(
-      timeout(400000), // 30 saniye zaman aşımı
-      catchError((error) => {
-          console.error('Timeout veya başka hata:', error);
-          return throwError(() => error);
-      })
-  );
-  }
+    return this.http.post(url, data, { headers, params }).pipe(
+        timeout(60000), // 60 saniye zaman aşımı
+        catchError((error) => {
+            if (error.name === 'TimeoutError') {
+                console.error('API isteği zaman aşımına uğradı.');
+                return throwError(() => new Error('Zaman aşımı: Sunucu yanıt vermiyor.'));
+            } else {
+                console.error('API isteği hatası:', error);
+                return throwError(() => error);
+            }
+        })
+    );
+}
 
   uploadJuniperExcelData(fileName: string, isFirstChunk: boolean, data: any[]): Observable<any> {
     //console.log(data);
