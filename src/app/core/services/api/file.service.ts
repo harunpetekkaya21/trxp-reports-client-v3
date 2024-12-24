@@ -60,21 +60,21 @@ export class FileService {
   uploadSejourExcelData(fileName: string, isFirstChunk: boolean, data: any[]): Observable<any> {
     //console.log(data);
 
-    const headers = { 'Content-Type': 'application/json' };
+    
     const params = new HttpParams().set('fileName', fileName).set('isFirstChunk', isFirstChunk.toString());
     const url = `${this.apiUrlUploadSejourExcelData}`;
 
-    return this.http.post(url, data, { headers, params });
+    return this.http.post(url, data, {  params });
   }
 
   uploadJuniperExcelData(fileName: string, isFirstChunk: boolean, data: any[]): Observable<any> {
     //console.log(data);
 
-    const headers = { 'Content-Type': 'application/json' };
+  
     const params = new HttpParams().set('fileName', fileName).set('isFirstChunk', isFirstChunk.toString());
     const url = `${this.apiUrlUploadJuniperExcelData}`;
 
-    return this.http.post(url, data, { headers, params });
+    return this.http.post(url, data, {  params });
   }
 
 

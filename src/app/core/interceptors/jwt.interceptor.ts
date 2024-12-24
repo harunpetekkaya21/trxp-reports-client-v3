@@ -7,18 +7,19 @@ import { AuthService } from '../services/auth.service';
 
 
 
-  export const jwtInterceptorFn: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
-    const authService = inject(AuthService);
-    const token = authService.getToken();
-  
-    if (token && !authService.isTokenExpired(token)) {
-      const cloned = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return next(cloned);
-    }
-  
-    return next(req);
-  };
+export const jwtInterceptorFn: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
+  const authService = inject(AuthService);
+  const token = authService.getToken();
+
+  if (token && !authService.isTokenExpired(token)) {
+    const cloned = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return next(cloned);
+  }
+
+  return next(req);
+};
+
