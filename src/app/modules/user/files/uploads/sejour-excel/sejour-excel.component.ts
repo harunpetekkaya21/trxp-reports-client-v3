@@ -16,7 +16,7 @@ import { AccordionModule } from 'primeng/accordion';
 import * as XLSX from 'xlsx';
 import { FileService } from '../../../../../core/services/api/file.service';
 import { FileListDTO } from '../../../../../core/models/file/file-list/FileListDTO';
-import { timeout } from 'rxjs';
+import { lastValueFrom, timeout } from 'rxjs';
 
 export interface FileList {
   name: string,
@@ -109,51 +109,65 @@ export class SejourExcelComponent {
     this.totalChunks = Math.ceil(data.length / chunkSize); // Toplam chunk sayısını hesapla
     this.chunkIndex = 0; // İlk chunk'ı başlat
     this.sentDataCount = 0; // Gönderilen veri miktarını sıfırla
-  
-    const uploadChunk = (chunk: any[], isFirst: boolean) => {
-      this.loading = true; // Spinner'ı aç
-      this.fileService.uploadSejourExcelData(fileName,isFirst, chunk)
-      .pipe(timeout(200000)) // 30 saniye zaman aşımı
-      .subscribe({
-        next: () => {
-          this.chunkIndex++; // Gönderilen chunk sayısını artır
-          this.sentDataCount += chunk.length; // Gönderilen veri sayısını artır
 
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: `Parça ${this.chunkIndex}/${this.totalChunks} başarıyla yüklendi.`
-          });
-  
-          if (this.chunkIndex < this.totalChunks) {
-            const nextChunk = data.slice(this.chunkIndex * chunkSize, (this.chunkIndex + 1) * chunkSize);
-            uploadChunk(nextChunk,false); // Bir sonraki chunk'ı gönder
-          } else {
-            this.loading = false; // Spinner'ı kapat
-            this.messageService.add({
-              severity: 'info',
-              summary: 'Info',
-              detail: 'Tüm veriler başarıyla yüklendi!'
-            });
-          }
-        },
-        error: (error) => {
-          this.loading = false; // Spinner'ı kapat
-          console.error(`Parça ${this.chunkIndex + 1} yüklenemedi:`, error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: `Parça ${this.chunkIndex + 1} yüklenemedi.`
-          });
-          this.loading = false; 
+    const uploadChunkWithRetry = async (chunk: any[], isFirst: boolean, retries = 3): Promise<void> => {
+        for (let attempt = 0; attempt < retries; attempt++) {
+            try {
+                console.log(`Gönderiliyor: Chunk ${this.chunkIndex + 1}/${this.totalChunks}, Satır Sayısı: ${chunk.length}`);
+                
+                // lastValueFrom kullanarak chunk'ı gönderiyoruz
+                await lastValueFrom(
+                    this.fileService.uploadSejourExcelData(fileName, isFirst, chunk)
+                        .pipe(timeout(200000)) // Timeout süresi
+                );
+
+                console.log(`Başarılı: Chunk ${this.chunkIndex + 1}/${this.totalChunks}`);
+                return; // Başarılı olursa döngüden çık
+            } catch (error) {
+                console.warn(`Chunk yükleme başarısız. Deneme: ${attempt + 1}, Chunk Index: ${this.chunkIndex + 1}`);
+                if (attempt === retries - 1) {
+                    console.error(`Chunk yükleme denemeleri tükendi: Chunk ${this.chunkIndex + 1}. Hata:`, error);
+                    throw error;
+                }
+            }
         }
-       
-      });
     };
-  
+
+    const uploadChunk = async (chunk: any[], isFirst: boolean): Promise<void> => {
+        try {
+            await uploadChunkWithRetry(chunk, isFirst); // Chunk'ı retry ile gönder
+            this.chunkIndex++; // Gönderilen chunk sayısını artır
+            this.sentDataCount += chunk.length; // Gönderilen veri sayısını artır
+
+            if (this.chunkIndex < this.totalChunks) {
+                const nextChunk = data.slice(
+                    this.chunkIndex * chunkSize,
+                    Math.min((this.chunkIndex + 1) * chunkSize, data.length)
+                );
+                await uploadChunk(nextChunk, false); // Bir sonraki chunk'ı gönder
+            } else {
+                console.log("Tüm chunk'lar başarıyla gönderildi.");
+                this.messageService.add({
+                    severity: 'info',
+                    summary: 'Başarı',
+                    detail: 'Tüm veriler başarıyla yüklendi!'
+                });
+                this.loading = false; // Spinner'ı kapat
+            }
+        } catch (error) {
+            console.error(`Hata: Chunk ${this.chunkIndex + 1}. Detay:`, error);
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Hata',
+                detail: `Chunk ${this.chunkIndex + 1} yüklenemedi. Hata: ${error.message}`
+            });
+            this.loading = false; // Hata durumunda yüklemeyi durdur
+        }
+    };
+
     const firstChunk = data.slice(0, chunkSize);
-    uploadChunk(firstChunk,isFirstChunk);// İlk chunk için isFirstChunk=true
-  }
+    uploadChunk(firstChunk, isFirstChunk); // İlk chunk için isFirstChunk=true
+}
 
   readExcel(file: File): Promise<any[]> {
      return new Promise((resolve, reject) => {

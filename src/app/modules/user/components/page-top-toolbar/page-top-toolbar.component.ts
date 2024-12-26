@@ -16,9 +16,9 @@ import { FileService } from '../../../../core/services/api/file.service';
   styleUrl: './page-top-toolbar.component.scss'
 })
 export class PageTopToolbarComponent {
-  providerLabel: string = 'Juniper'; // Varsayılan gösterim
-  JuniperFileReportDate: Date; // Örnek tarih
-  SejourFileReportDate: Date; // Örnek tarih
+ // providerLabel: string = 'Juniper'; // 
+  JuniperFileReportDate: Date; //
+  SejourFileReportDate: Date; // 
   fileReportDateTooltip = 'Rapor tarihi görüntülenemez';
 
   private providerMap = {
@@ -36,14 +36,14 @@ export class PageTopToolbarComponent {
   }
 
   ngOnInit(): void {
-    this.updateProviderLabel();
+    //this.updateProviderLabel();
 
     this.getJuniperLastFileDate();
     this.getSejourLastFileDate();
     // LocalStorage'daki değişiklikleri dinleyin
-    window.addEventListener('storage', () => {
-      this.updateProviderLabel();
-    });
+    // window.addEventListener('storage', () => {
+    //   this.updateProviderLabel();
+    // });
   }
 
   getJuniperLastFileDate() {
@@ -54,7 +54,8 @@ export class PageTopToolbarComponent {
         
       },
       error: (error) => {
-
+        console.log(error.message+'juniper son dosya tarihi alinamadi');
+        
       }
     })
   }
@@ -67,7 +68,8 @@ export class PageTopToolbarComponent {
         
       },
       error: (error) => {
-
+        console.log(error.message+'sejour son dosya tarihi alinamadi');
+        
       }
     })
   }
@@ -83,8 +85,8 @@ export class PageTopToolbarComponent {
     return new Date(year, month, day,hours,minute);
   }
 
-  private updateProviderLabel(): void {
-    const providerValue = Number(localStorage.getItem('Provider')); 
-    this.providerLabel = this.providerMap[providerValue] || 'Unknown';
-  }
+  // private updateProviderLabel(): void {
+  //   const providerValue = Number(localStorage.getItem('Provider')); 
+  //   this.providerLabel = this.providerMap[providerValue] || 'Unknown';
+  // }
 }
