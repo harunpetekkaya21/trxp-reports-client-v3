@@ -74,43 +74,82 @@ loading: boolean = false;
 
     this.readExcel(file)
       .then((data) => {
-        this.loading = true;
-
-        // Backend'e tüm veriyi gönder
-        this.fileService.uploadJuniperExcelData(fileName, data).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Excel data uploaded successfully.'
-            });
-          },
-          error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: `Upload failed: ${err.message}`
-            });
-            this.loading = false;
-          },
-          complete: () => {
-            this.loading = false;
-          }
-        });
+        if (data.length > 1000) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Info',
+            detail: 'Verileriniz parça parça yükleniyor, lütfen bekleyiniz...'
+          });
+                 
+        setTimeout(() => {
+          this.loading = true; 
+          this.uploadInChunks(fileName, data,true);
+        }, 0); 
+          //this.uploadInChunks(fileName, data,true);
+        } else {
+          this.uploadToApi(fileName, data);
+        }
       })
       .catch((error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: `Failed to read Excel file: ${error.message}`
+          detail: `Failed to process the Excel file: ${error.message}`
         });
-        this.loading = false;
+      }).finally(() => {
+        this.loading = false; 
       });
   }
 
+  uploadInChunks(fileName: string, data: any[], isFirstChunk: boolean): void {
+    const chunkSize = 1000; // Her chunk'ta gönderilecek veri miktarı
+    this.totalChunks = Math.ceil(data.length / chunkSize); // Toplam chunk sayısını hesapla
+    this.chunkIndex = 0; // İlk chunk'ı başlat
+    this.sentDataCount = 0; // Gönderilen veri miktarını sıfırla
+  
+    const uploadChunk = (chunk: any[], isFirst: boolean) => {
+      this.loading = true; // Spinner'ı aç
+      this.fileService.uploadJuniperExcelData(fileName,isFirst, chunk).subscribe({
+        next: () => {
+          this.chunkIndex++; // Gönderilen chunk sayısını artır
+          this.sentDataCount += chunk.length; // Gönderilen veri sayısını artır
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Parça ${this.chunkIndex}/${this.totalChunks} başarıyla yüklendi.`
+          });
+  
+          if (this.chunkIndex < this.totalChunks) {
+            const nextChunk = data.slice(this.chunkIndex * chunkSize, (this.chunkIndex + 1) * chunkSize);
+            uploadChunk(nextChunk,false); // Bir sonraki chunk'ı gönder
+          } else {
+            this.loading = false; // Spinner'ı kapat
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Info',
+              detail: 'Tüm veriler başarıyla yüklendi!'
+            });
+          }
+        },
+        error: (error) => {
+          this.loading = false; // Spinner'ı kapat
+          console.error(`Parça ${this.chunkIndex + 1} yüklenemedi:`, error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Parça ${this.chunkIndex + 1} yüklenemedi.`
+          });
+        }
+      });
+    };
+  
+    const firstChunk = data.slice(0, chunkSize);
+    uploadChunk(firstChunk,isFirstChunk);// İlk chunk için isFirstChunk=true
+  }
 
 
-  private readExcel(file: File): Promise<any[]> {
+  readExcel(file: File): Promise<any[]> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e: any) => {
@@ -188,6 +227,27 @@ loading: boolean = false;
 
 
 
+  uploadToApi(fileName: string, data: any[]): void {
+    this.fileService.uploadJuniperExcelData(fileName,true, data).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Tüm veriler başarıyla yüklendi.'
+        });
+        this.loading = false; // Spinner durdur
+      },
+      error: (error) => {
+      
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.message
+        });
+        this.loading = false; // Spinner durdur
+      }
+    });
+  }
 
 
   convertExcelDate(excelSerialDate: number): Date {

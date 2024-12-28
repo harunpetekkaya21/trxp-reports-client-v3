@@ -57,33 +57,45 @@ export class FileService {
   // uploadJuniperFile(formData: FormData): Observable<any> {
   //   return this.http.post(`${this.apiUrlUploadJuniperFile}`, formData);
   // }
-  uploadSejourExcelData(fileName: string, isFirstChunk: boolean, data: any[]): Observable<any> {
-    const params = new HttpParams().set('fileName', fileName).set('isFirstChunk', isFirstChunk.toString());
+  uploadSejourExcelData(fileName: string, data: any[]): Observable<any> {
+    const params = new HttpParams().set('fileName', fileName);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const url = `${this.apiUrlUploadSejourExcelData}`;
 
     return this.http.post(url, data, { headers, params }).pipe(
-        timeout(200000), // 60 saniye zaman aşımı
+        timeout(2700000),//45 dk timeout
         catchError((error) => {
             if (error.name === 'TimeoutError') {
-                console.error('API isteği zaman aşımına uğradı.');
-                return throwError(() => new Error('Zaman aşımı: Sunucu yanıt vermiyor.'));
+                console.error('API isteği zaman asimina uğradı.');
+                return throwError(() => new Error('Zaman asimi: Sunucu yanit vermiyor.'));
             } else {
-                console.error('API isteği hatası:', error);
+                console.error('API isteği hatasi:', error);
                 return throwError(() => error);
             }
         })
     );
 }
 
-  uploadJuniperExcelData(fileName: string, isFirstChunk: boolean, data: any[]): Observable<any> {
+  uploadJuniperExcelData(fileName: string, data: any[]): Observable<any> {
     //console.log(data);
 
   
-    const params = new HttpParams().set('fileName', fileName).set('isFirstChunk', isFirstChunk.toString());
+    const params = new HttpParams().set('fileName', fileName);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const url = `${this.apiUrlUploadJuniperExcelData}`;
 
-    return this.http.post(url, data, {  params });
+    return this.http.post(url, data, { headers, params }).pipe(
+      timeout(2700000),//45 dk timeout
+      catchError((error) => {
+          if (error.name === 'TimeoutError') {
+              console.error('API isteği zaman asimina uğradı.');
+              return throwError(() => new Error('Zaman asimi: Sunucu yanit vermiyor.'));
+          } else {
+              console.error('API isteği hatasi:', error);
+              return throwError(() => error);
+          }
+      })
+  );
   }
 
 
