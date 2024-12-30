@@ -4,6 +4,14 @@ export const RESERVATIONS_ROUTES: Routes = [
  
  
   {
+    path: 'daily',
+    loadComponent: () =>
+      import('./daily/daily.component').then(
+        m => m.DailyComponent
+      ),
+ 
+  },
+  {
     path: 'reservation-date',
     loadComponent: () =>
       import('./reservation-date/reservation-date.component').then(

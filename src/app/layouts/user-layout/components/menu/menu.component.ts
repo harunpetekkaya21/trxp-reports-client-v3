@@ -85,6 +85,11 @@ export class MenuComponent implements OnInit {
                         items: [
                            
                             {
+                                label: 'Daily ',
+                                icon: '',
+                                routerLink: ['reports/reservations/daily']
+                            },
+                            {
                                 label: 'Reservation Dates ',
                                 icon: '',
                                 routerLink: ['reports/reservations/reservation-date']

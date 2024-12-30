@@ -22,6 +22,7 @@ import { FileService } from '../../../../../core/services/api/file.service';
 import { PageTopToolbarComponent } from '../../../components/page-top-toolbar/page-top-toolbar.component';
 
 
+
 @Component({
   selector: 'app-area',
   standalone: true,

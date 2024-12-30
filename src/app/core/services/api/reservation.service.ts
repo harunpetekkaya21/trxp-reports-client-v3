@@ -7,6 +7,8 @@ import { ErrorHandler } from '../../helpers/ErrorHandler';
 import { environment } from '../../../../environments/environment';
 import { MonthlyReportsRESPONSE } from '../../models/monthly-report/MonthlyReportsRESPONSE';
 import { ReservationSummaryResponse } from '../../models/reservation-summary/ReservationSummaryResponse';
+import { DailyByDateReservationDto } from '../../models/reservation-daily/DailyByDateReservationDto';
+import { DailyByDateReservationResponse } from '../../models/reservation-daily/DailyByDateReservationResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,10 @@ import { ReservationSummaryResponse } from '../../models/reservation-summary/Res
 export class ReservationService {
   private readonly baseUrl  = environment.apiUrl;
   constructor(private http:HttpClient) { }
+
+  getDailyReservations(date: string): Observable<DailyByDateReservationResponse> {
+    return this.http.get<DailyByDateReservationResponse>(`${this.baseUrl}/Reservations/daily-report?reservationDate=${date}`);
+  }
 
   getReservationsSummary(
   ): Observable<ReservationSummaryResponse> {

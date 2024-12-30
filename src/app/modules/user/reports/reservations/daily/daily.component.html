@@ -1,0 +1,68 @@
+<p-toast></p-toast>
+
+<div class="grid p-fluid">
+    <div class="col-12" style="display: flex; align-items: center; gap: 8px;">
+        <img style="width: 28px; height: 28px;" alt="dropdown icon" src="/assets/icons/icon-info.png">
+        <span>Bu sayfada butun rezervasyonlar bolgelere gore gruplandirilarak raporlanmistir.</span>
+    </div>
+
+</div>
+
+<!-- <ng-template #fileReportDateTooltip>
+    <div class="flex align-items-center">
+        <span> Bu sayfadaki raporlar <b>{{fileReportDate}}</b> tarihinde yuklenen rapora gore hazirlanmistir ! </span>
+    </div>
+</ng-template> -->
+
+<app-page-top-toolbar></app-page-top-toolbar> 
+
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-4">
+        <div class="card">
+            
+            <p-calendar 
+            class="max-w-full" 
+            dateFormat="yy-mm-dd"
+            [(ngModel)]="selectedDate" 
+            [inline]="true" 
+            [showWeek]="true" 
+            (onSelect)="onDateSelect()"
+            />
+        </div>
+    </div>
+    <div class="col-12 lg:col-8">
+        <div class="card">
+            <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+            
+        </div>
+    </div>
+</div>
+
+<div class="grid p-fluid">
+    <div class="col-12 ">
+        <div class="card">
+            <div *ngIf="reservations" class="card mt-3">
+                <p-table [value]="[reservations]" [paginator]="false" [responsiveLayout]="'scroll'">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Date</th>
+                      <th>Total Reservations</th>
+                      <th>Total Sales Price</th>
+                      <th>Total Net Cost Price</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-res>
+                    <tr>
+                      <td>{{ res.date | date: 'yyyy-MM-dd' }}</td>
+                      <td>{{ res.totalReservations }}</td>
+                      <td>{{ res.totalSalesPrice | currency }}</td>
+                      <td>{{ res.totalNetCostPrice | currency }}</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            
+        </div>
+    </div>
+    
+</div>
