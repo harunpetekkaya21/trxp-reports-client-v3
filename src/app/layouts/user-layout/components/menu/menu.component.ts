@@ -89,11 +89,7 @@ export class MenuComponent implements OnInit {
                                 icon: '',
                                 routerLink: ['reports/reservations/daily']
                             },
-                            {
-                                label: 'Reservation Dates ',
-                                icon: '',
-                                routerLink: ['reports/reservations/reservation-date']
-                            },
+                            
                             {
                                 label: 'Agencies',
                                 icon: '',
@@ -120,8 +116,13 @@ export class MenuComponent implements OnInit {
                                 label: 'Nationalities',
                                 icon: '',
                                 routerLink: ['reports/reservations/nationality']
-                            }
+                            },
                             
+                            {
+                                label: 'Group By Reservation Date',
+                                icon: '',
+                                routerLink: ['reports/reservations/reservation-date']
+                            },
 
                         ]
                     },
