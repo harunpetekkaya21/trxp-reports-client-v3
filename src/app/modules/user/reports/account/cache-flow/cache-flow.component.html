@@ -109,7 +109,7 @@
       </div>
       
 
-    <div class="grid">
+    <div *ngIf="selectedCacheFlowType != null" class="grid">
         <div class="col-12 xl:col-6">
 
             <p-table [value]="supplierList" scrollable="true" scrollHeight="20rem">
