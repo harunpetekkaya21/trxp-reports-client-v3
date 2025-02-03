@@ -17,6 +17,14 @@ export const UPLOAD_ROUTES: Routes = [
       ),
    
   },
+  {
+    path: 'cache-flow-excel',
+    loadComponent: () =>
+      import('./cache-flow-excel/cache-flow-excel.component').then(
+        m => m.CacheFlowExcelComponent
+      ),
+   
+  },
   
   
   

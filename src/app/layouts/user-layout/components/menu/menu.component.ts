@@ -7,7 +7,7 @@ import { UserLayoutService } from '../../services/user.layout.service';
 
 @Component({
     standalone: true,
-    imports: [MenuItemComponent,NgIf,NgFor],
+    imports: [MenuItemComponent, NgIf, NgFor],
     selector: 'app-menu',
     templateUrl: './menu.component.html'
 })
@@ -83,13 +83,13 @@ export class MenuComponent implements OnInit {
                         label: 'RESERVATIONS',
                         icon: '',
                         items: [
-                           
+
                             {
                                 label: 'Daily ',
                                 icon: '',
                                 routerLink: ['reports/reservations/daily']
                             },
-                            
+
                             {
                                 label: 'Agencies',
                                 icon: '',
@@ -105,19 +105,19 @@ export class MenuComponent implements OnInit {
                                 icon: '',
                                 routerLink: ['reports/reservations/hotel']
                             },
-    
+
                             {
                                 label: 'Suppliers',
                                 icon: '',
                                 routerLink: ['reports/reservations/supplier']
                             },
-                           
+
                             {
                                 label: 'Nationalities',
                                 icon: '',
                                 routerLink: ['reports/reservations/nationality']
                             },
-                            
+
                             {
                                 label: 'Group By Reservation Date',
                                 icon: '',
@@ -133,35 +133,34 @@ export class MenuComponent implements OnInit {
                             { label: 'CACHE FLOW', icon: 'pi pi-fw ', routerLink: ['reports/account/cache-flow'] }
                         ]
                     },
-                    
+
 
                 ]
             },
+          
             {
                 label: 'Files',
-                icon: '',
                 items: [
-
                     {
-                        label: 'Uploads',
-                        icon: 'pi pi-file-import',
+                        label: 'Uploads', icon: 'pi pi-fw pi-cloud-upload',
                         items: [
                             {
-                                label: 'Upload Juniper Reservation Excel',
-                                icon: 'pi pi-file-excel',
-                                routerLink: ['uploads/juniper-excel']
+                                label: 'Upload Reservation', icon: 'pi pi-fw pi-book',
+                                items: [
+                                    { label: 'Upload Juniper Excel', icon: 'pi pi-fw pi-angle-double-right', routerLink: ['uploads/juniper-excel'] },
+                                    { label: 'Upload Sejour Excel', icon: 'pi pi-fw pi-angle-double-right', routerLink: ['uploads/sejour-excel'] },
+                                   
+                                ]
                             },
                             {
-                                label: 'Upload Sejour Reservation Excel',
-                                icon: 'pi pi-file-excel',
-                                routerLink: ['uploads/sejour-excel']
-                            }
-                            
-
+                                label: 'Upload Account', icon: 'pi pi-fw pi-percentage',
+                                items: [
+                                    { label: 'Cache Flow', icon: 'pi pi-fw pi-angle-double-right', routerLink: ['uploads/cache-flow-excel'] }
+                                ]
+                            },
                         ]
                     },
                     
-
                 ]
             },
 

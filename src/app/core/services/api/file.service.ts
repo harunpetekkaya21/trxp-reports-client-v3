@@ -19,6 +19,7 @@ export class FileService {
 
   private apiUrlUploadJuniperExcelData = `${this.baseUrl}/JuniperUploads/upload-juniper-excel-data`;
   private apiUrlUploadSejourExcelData = `${this.baseUrl}/SejourUploads/upload-sejour-excel-data`;
+  private apiUrlUploadCacheFlowExcelData = `${this.baseUrl}/AccountUploads/upload-cache-flow-data`;
 
   constructor(private http: HttpClient) { }
 
@@ -83,6 +84,25 @@ export class FileService {
     const params = new HttpParams().set('fileName', fileName);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const url = `${this.apiUrlUploadJuniperExcelData}`;
+
+    return this.http.post(url, data, { headers, params }).pipe(
+      timeout(2700000),//45 dk timeout
+      catchError((error) => {
+          if (error.name === 'TimeoutError') {
+              console.error('API isteği zaman asimina uğradı.');
+              return throwError(() => new Error('Zaman asimi: Sunucu yanit vermiyor.'));
+          } else {
+              console.error('API isteği hatasi:', error);
+              return throwError(() => error);
+          }
+      })
+  );
+  }
+
+  uploadCacheFlowExcelData(fileName: string, data: any[]): Observable<any>{
+    const params = new HttpParams().set('fileName', fileName);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const url = `${this.apiUrlUploadCacheFlowExcelData}`;
 
     return this.http.post(url, data, { headers, params }).pipe(
       timeout(2700000),//45 dk timeout
