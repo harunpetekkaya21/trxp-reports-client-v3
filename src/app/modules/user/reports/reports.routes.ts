@@ -24,6 +24,12 @@ export const REPORTS_ROUTES: Routes = [
         import('./reservations/reservations.routes').then(m => m.RESERVATIONS_ROUTES),
         // data:{preload:'true'}
     },
+    {
+      path: 'account',
+      loadChildren: () =>
+        import('./account/account.routes').then(m => m.ACCOUNT_ROUTES),
+        // data:{preload:'true'}
+    },
     // {
     //   path: 'uploads',
     //   loadChildren: () =>

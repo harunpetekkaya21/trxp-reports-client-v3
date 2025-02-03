@@ -80,7 +80,7 @@ export class MenuComponent implements OnInit {
                 items: [
 
                     {
-                        label: 'Reservations',
+                        label: 'RESERVATIONS',
                         icon: '',
                         items: [
                            
@@ -126,6 +126,14 @@ export class MenuComponent implements OnInit {
 
                         ]
                     },
+                    {
+                        label: 'ACCOUNT',
+                        icon: '',
+                        items: [
+                            { label: 'CACHE FLOW', icon: 'pi pi-fw ', routerLink: ['reports/account/cache-flow'] }
+                        ]
+                    },
+                    
 
                 ]
             },

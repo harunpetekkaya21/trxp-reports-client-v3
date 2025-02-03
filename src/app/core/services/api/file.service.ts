@@ -37,7 +37,7 @@ export class FileService {
     status: string = 'OK',
     descending: boolean = true,
     page: number = 0,
-    pageSize: number = 5,
+    pageSize: number = 2,
   ): Observable<FileListRESPONSE> {
     const params = new HttpParams()
       .set('orderBy', orderBy)
