@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { MessageService } from 'primeng/api';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
@@ -12,26 +12,25 @@ import { FileService } from '../../../../../core/services/api/file.service';
 import { FileListDTO } from '../../../../../core/models/file/file-list/FileListDTO';
 import { FileStatus } from '../juniper-excel/juniper-excel.component';
 import * as XLSX from 'xlsx';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 @Component({
   selector: 'app-cache-flow-excel',
   standalone: true,
-  imports: [CommonModule,FormsModule,TableModule,FileUploadModule,AccordionModule,ProgressBarModule,ProgressSpinnerModule,ToastModule],
+  imports: [CommonModule, FormsModule, TableModule, FileUploadModule, AccordionModule, ProgressBarModule, ProgressSpinnerModule, ToastModule, RadioButtonModule],
   providers: [MessageService],
   templateUrl: './cache-flow-excel.component.html',
   styleUrl: './cache-flow-excel.component.scss'
 })
 export class CacheFlowExcelComponent {
-loading: boolean = false;
-  fileList: FileListDTO[] = [];
-  files: FileStatus[] = [];
-  uploadProgress: number = 0;
-  processedData: any[] = []; // İşlenmiş Excel verisi
-  maxFileSize: number = 5 * 1024 * 1024; // Maksimum dosya boyutu (5 MB)
+  @ViewChild('fileUpload') fileUpload: FileUpload | undefined; // PrimeNG FileUpload bileşenine erişim
+  fileList: any[] = [];
+  files: any[] = [];
 
-  chunkIndex: number = 0; // O anki chunk
-  totalChunks: number = 0; // Toplam chunk sayısı
-  sentDataCount: number = 0; // Gönderilen toplam veri
+  selectedFile: File | null = null; // Seçilen dosyayı saklamak için
+  cacheFlowType!: string;
+  // Desteklenen sütunlar
+  requiredColumns = ['Booking Code', 'Description', 'Booking Date', 'Travel Start', 'Travel End', 'Balance due'];
 
   constructor(
     private messageService: MessageService,
@@ -43,157 +42,143 @@ loading: boolean = false;
   }
 
 
-  onTemplatedUpload(): void {
-    if (!this.files || this.files.length === 0) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Warning',
-        detail: 'No files selected.'
-      });
+
+  // Dosya seçme işlemi
+  onFileSelect(event: any): void {
+    this.selectedFile = event.files[0]; // Seçilen dosyayı sakla
+    console.log('Dosya seçildi:', this.selectedFile?.name);
+  }
+
+  // Dosya yükleme işlemi
+  onUpload(event: any): void {
+    if (!this.selectedFile) {
+      alert('Lütfen bir dosya seçin.');
       return;
     }
 
-    const file = this.files[0].file;
-    const fileName = this.generateUniqueFileName(file.name);
+    let fileName = this.selectedFile.name;
+    const reader = new FileReader();
 
-    this.loading = true;
+    reader.onload = (e: any) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
 
-    this.readExcel(file)
-      .then((data) => {
-        this.loading = true;
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
 
-        // Backend'e tüm veriyi gönder
-        this.fileService.uploadJuniperExcelData(fileName, data).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Excel data uploaded successfully.'
-            });
-          },
-          error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: `Upload failed: ${err.message}`
-            });
-            this.loading = false;
-          },
-          complete: () => {
-            this.loading = false;
-          }
-        });
-      })
-      .catch((error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Failed to read Excel file: ${error.message}`
-        });
-        this.loading = false;
-      });
-  }
+        const excelData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
+        const customerSupplier = excelData[0]?.[0] || 'Unknown';
+        const reportStartDate = this.excelDateToJSDate(excelData[1]?.[0]) || 'Unknown';
+        const reportEndDate = this.excelDateToJSDate(excelData[2]?.[0]) || 'Unknown';
+        const tableHeaders = excelData[3];
+        const tableData = excelData.slice(4);
 
-
-  private readExcel(file: File): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        try {
-          const arrayBuffer = e.target.result;
-          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-          const sheetName = workbook.SheetNames[0]; // İlk sayfa
-          const sheet = workbook.Sheets[sheetName];
-
-          // Tüm verileri JSON olarak al (header:1 ile ilk satır başlık kabul edilir)
-          const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-          // İlk satır başlıklar
-          let headers = rawData[0] as string[];
-          // Başlıklardaki sağ ve sol boşlukları temizle
-          headers = headers.map(h => h?.trim());
-
-          //console.log("Headers read from Excel:", headers);
-
-          const requiredColumns = [
-            "Booking code", "Date", "No. of nights", "Start date", "End date",
-            "Supplier name", "Description", "Area name", "Sales Price",
-            "Sales currency", "Cost price", "Net Cost price", "Cost currency",
-            "Nationality", "Status by booking element", "No. of Rooms", "Agency", "Pax number"
-          ];
-
-          // Eksik kolon kontrolü
-          const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-          if (missingColumns.length > 0) {
-            console.error("Missing columns:", missingColumns);
-            reject(new Error(`Missing required columns: ${missingColumns.join(", ")}`));
-            return;
-          }
-
-          // Boş satırları filtrele (başlık hariç)
-          const filteredData = rawData.slice(1).filter((row: any[]) => {
-            // En az bir hücre dolu mu?
-            return row.some(value => value !== null && value !== undefined && value !== "");
+        const records = tableData.map(row => {
+          const record: any = {};
+          tableHeaders.forEach((header: string, index: number) => {
+            if (header === 'Booking Date' || header === 'Travel Start' || header === 'Travel End') {
+              record[header] = this.excelDateToJSDate(row[index]) || null;
+            } else if (header === 'Balance due') {
+              record[header] = row[index] ? parseFloat(row[index]) : 0;
+            } else {
+              record[header] = row[index] || null;
+            }
           });
+          return record;
+        });
 
-          // Verileri dönüştür
-          const formattedData = filteredData.map((row: any[]) => {
-            const rowData: any = {};
+        const payload = {
+          customerSupplier,
+          reportStartDate,
+          reportEndDate,
+          records
+        };
 
-            requiredColumns.forEach((col) => {
-              const index = headers.indexOf(col);
-              const value = row[index];
+        ///console.log('Payload hazırlanıyor:', payload);
 
-             // Tarih kolonlarını dönüştür
-             if (["Date", "Start date", "End date"].includes(col)) {
-              rowData[col] = value ? this.convertExcelDate(value) : null;
-            }
-            // Sayısal kolonlar için dönüştür
-            else if (["Sales Price", "Cost price", "Net Cost price"].includes(col)) {
-              rowData[col] = value ? parseFloat(value) : 0;
-            }
-            // Diğer kolonlar
-            else {
-              rowData[col] = value ?? null;
-            }
-            });
+        // FileService ile yükleme işlemi
 
-            return rowData;
+        if (this.cacheFlowType == "Customer") {
+          this.fileService.uploadCacheFlowCustomerExcelData(fileName, payload).subscribe({
+            next: (res) => {
+              alert('Dosya basariyla yuklendi!');
+              this.onClear(); // Yükleme tamamlandığında dosyaları temizle
+            },
+            error: (err) => { alert('Dosya yuklenirken hata olustu: ' + err.message); this.onClear(); }
+
           });
-
-          resolve(formattedData); // Formatlanmış veriyi döndür
-        } catch (error) {
-          reject(error);
         }
-      };
-      reader.onerror = (error) => reject(error);
-      reader.readAsArrayBuffer(file);
-    });
+        if (this.cacheFlowType == "Supplier") {
+          this.fileService.uploadCacheFlowSupplierExcelData(fileName, payload).subscribe({
+            next: (res) => {
+              alert('Dosya basariyla yuklendi!');
+              this.onClear(); // Yükleme tamamlandığında dosyaları temizle
+            },
+            error: (err) => { alert('Dosya yuklenirken hata olustu: ' + err.message); this.onClear(); }
+          });
+        }
+
+
+      } catch (error) {
+        alert('Dosya işlenirken bir hata oluştu.');
+        this.onClear();
+        console.error(error);
+      }
+    };
+
+    reader.readAsArrayBuffer(this.selectedFile); // Seçilen dosyayı okuyarak yüklemeye başla
   }
 
-
-
-
-
-  convertExcelDate(excelSerialDate: number): Date {
-    // Excel'in başlangıç tarihi: 1 Ocak 1900
-    const excelEpoch = new Date(Date.UTC(1900, 0, 1)); // UTC zaman diliminde 1 Ocak 1900
-    const days = Math.floor(excelSerialDate) - 2; // Excel tarihlerinde 1900 yılı için kayma (leap year bug)
-    const millisecondsPerDay = 24 * 60 * 60 * 1000; // Günlük milisaniye
-    const fractionalDay = excelSerialDate % 1; // Günün kesirli kısmı
-    const millisecondsForFractionalDay = fractionalDay * millisecondsPerDay;
-
-    return new Date(excelEpoch.getTime() + days * millisecondsPerDay + millisecondsForFractionalDay);
+  // Excel tarihini Date formatına dönüştür
+  excelDateToJSDate(excelDate: any): string | null {
+    if (!excelDate) return null;
+  
+    // Eğer tarih bir sayıysa (Excel Serial Date)
+    if (!isNaN(excelDate)) {
+      const date = new Date((excelDate - 25569) * 86400 * 1000);
+      return date.toISOString(); // ISO 8601 formatında döner
+    }
+  
+    // Eğer tarih string ise (örneğin "31/01/2025")
+    if (typeof excelDate === 'string') {
+      const parts = excelDate.split('/'); // Tarihi parçala
+      if (parts.length === 3) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JavaScript'te ay 0'dan başlar
+        const year = parseInt(parts[2], 10);
+  
+        const date = new Date(year, month, day);
+        if (!isNaN(date.getTime())) {
+          return date.toISOString();
+        }
+      }
+    }
+  
+    // Eğer tarih geçerli değilse
+    console.error('Invalid date format:', excelDate);
+    return null;
   }
-
-
+  
   
 
+  // Seçilen dosyaları temizleme
+  onClear(): void {
+    if (this.fileUpload) {
+      this.fileUpload.clear(); // Dosya listesini temizle
+    }
+    this.selectedFile = null; // Seçili dosyayı da temizle
+    console.log('Seçilen dosyalar temizlendi.');
+  }
+
   loadUploadedFiles(): void {
-    this.fileService.getAllFiles("Created","OK",true,0,5).subscribe({
+    this.fileService.getCacheFlowFiles().subscribe({
       next: (response) => {
-        this.fileList = response.data;
+        console.log(response);
+
+        this.fileList = response;
+
       },
       error: (error) => {
         console.error(error);
@@ -201,37 +186,4 @@ loading: boolean = false;
     });
   }
 
-  choose(event: any, callback: Function): void {
-    callback();
-  }
-
-  onSelectedFiles(event: any): void {
-    this.files = event.currentFiles.map((file: File) => ({
-      file,
-      status: 'Pending',
-    }));
-  }
-
-
-  formatSize(bytes: number): string {
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  onRemoveTemplatingFile(event: any, file: FileStatus, removeFileCallback: any, index: number): void {
-    removeFileCallback(event, index);
-    this.files.splice(index, 1);
-  }
-
-  private generateUniqueFileName(fileName: string): string {
-    // Dosya uzantısını kaldır
-    const fileNameWithoutExtension = fileName.split('.').slice(0, -1).join('.');
-    
-    // Rastgele kısa bir GUID oluştur ve ekle
-    const shortGuid = Math.random().toString(36).substring(2, 8); // 6 karakterli GUID
-    
-    return `${fileNameWithoutExtension}-${shortGuid}`;
-  }
 }

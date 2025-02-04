@@ -19,7 +19,9 @@ export class FileService {
 
   private apiUrlUploadJuniperExcelData = `${this.baseUrl}/JuniperUploads/upload-juniper-excel-data`;
   private apiUrlUploadSejourExcelData = `${this.baseUrl}/SejourUploads/upload-sejour-excel-data`;
-  private apiUrlUploadCacheFlowExcelData = `${this.baseUrl}/AccountUploads/upload-cache-flow-data`;
+  private apiUrlUploadCacheFlowCustomerExcelData = `${this.baseUrl}/CacheFlows/upload-customer-excel-data`;
+  private apiUrlUploadCacheFlowSupplierExcelData = `${this.baseUrl}/CacheFlows/upload-supplier-excel-data`;
+  private apiUrlGetCacheFlowFiles = `${this.baseUrl}/CacheFlows/get-cache-flow-files`; 
 
   constructor(private http: HttpClient) { }
 
@@ -99,23 +101,27 @@ export class FileService {
   );
   }
 
-  uploadCacheFlowExcelData(fileName: string, data: any[]): Observable<any>{
+  uploadCacheFlowCustomerExcelData(fileName :any ,payload: any): Observable<any>{
     const params = new HttpParams().set('fileName', fileName);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const url = `${this.apiUrlUploadCacheFlowExcelData}`;
+   
+    return this.http.post(this.apiUrlUploadCacheFlowCustomerExcelData, payload,{headers,params});
+  }
 
-    return this.http.post(url, data, { headers, params }).pipe(
-      timeout(2700000),//45 dk timeout
-      catchError((error) => {
-          if (error.name === 'TimeoutError') {
-              console.error('API isteği zaman asimina uğradı.');
-              return throwError(() => new Error('Zaman asimi: Sunucu yanit vermiyor.'));
-          } else {
-              console.error('API isteği hatasi:', error);
-              return throwError(() => error);
-          }
+  uploadCacheFlowSupplierExcelData(fileName :any ,payload: any): Observable<any>{
+    const params = new HttpParams().set('fileName', fileName);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+   
+    return this.http.post(this.apiUrlUploadCacheFlowSupplierExcelData, payload,{headers,params});
+  }
+
+  getCacheFlowFiles(){
+    return this.http.get<any>(this.apiUrlGetCacheFlowFiles).pipe(
+      catchError((error: HttpErrorResponse) => {
+        const parsedError: ErrorModel = ErrorHandler.parseHttpError(error);
+        return throwError(() => parsedError);
       })
-  );
+    );
   }
 
 

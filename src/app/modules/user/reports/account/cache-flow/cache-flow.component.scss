@@ -1,3 +1,129 @@
-.sifirla {
-    margin-left: auto;
+.report-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+
+  .balance-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    color: #fff;
+    position: relative;
+
+    &.low {
+      background-color: #4caf50; // Yeşil
+    }
+
+    &.medium {
+      background-color: #ff9800; // Turuncu
+    }
+
+    &.high {
+      background-color: #f44336; // Kırmızı
+    }
+
+    .balance-details {
+      h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .balance-amount {
+        margin: 5px 0 0;
+        font-size: 36px;
+        font-weight: bold;
+      }
+    }
+
+    .additional-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .customer-info,
+      .date-info {
+        margin: 10px 0;
+
+        h3 {
+          margin: 0;
+          font-size: 16px;
+          color: #ddd;
+        }
+
+        p {
+          margin: 0;
+          font-size: 19px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .balance-icon {
+      font-size: 50px;
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      opacity: 0.2; // Şeffaf arka plan ikonu
+    }
   }
+
+  .report-table-container {
+    h2 {
+      margin-bottom: 15px;
+      font-size: 20px;
+      color: #555;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+
+      thead {
+        background-color: #007bff;
+        color: #fff;
+
+        th {
+          padding: 10px;
+          text-align: left;
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid #ddd;
+          transition: background-color 0.3s;
+
+          &:hover {
+            background-color: #f1f1f1;
+          }
+        }
+
+        td {
+          padding: 10px;
+
+          &.low {
+            color: #4caf50; // Yeşil
+            font-weight: bold;
+          }
+
+          &.medium {
+            color: #ff9800; // Turuncu
+            font-weight: bold;
+          }
+
+          &.high {
+            color: #f44336; // Kırmızı
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+}

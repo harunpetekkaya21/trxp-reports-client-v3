@@ -1,89 +1,73 @@
-<div *ngIf="loading" class="spinner-container">
-    <p-progressSpinner></p-progressSpinner>
-    <div class="progress-info">
-      <p>Veriler yukleniyor, Sayfadan cikmayiniz !...</p>
-    
-      <p>Excel dosyanizda binlerce satir var ise bu islem 10-15 dakika surebilir</p>
-     
+<div class="card">
+
+
+  <div class="card flex justify-content-center">
+
+    <div class="flex flex-wrap gap-3">
+
+      <div class="flex align-items-center">
+        <p-radioButton name="Customer" value="Customer" [(ngModel)]="cacheFlowType" inputId="1" />
+        <label for="1" class="ml-2">
+          Customer
+        </label>
+      </div>
+
+      <div class="flex align-items-center">
+        <p-radioButton name="Supplier" value="Supplier" [(ngModel)]="cacheFlowType" inputId="2" />
+        <label for="2" class="ml-2">
+          Supplier
+        </label>
+      </div>
+
+
     </div>
+  </div>
+
+  <div *ngIf="cacheFlowType != null" class="container">
+    <h2>Excel Yükle</h2>
+    <p-fileUpload 
+      #fileUpload 
+      mode="advanced" 
+      name="file" 
+      customUpload="true" 
+      (onSelect)="onFileSelect($event)" 
+      (uploadHandler)="onUpload($event)" 
+      accept=".xlsx, .xls" 
+      chooseLabel="Excel Seç" 
+      uploadLabel="Yükle">
+    </p-fileUpload>
   </div>
   
   
-  
-    <div class="card">
-  
-      <p-accordion [activeIndex]="0">
-        <p-accordionTab header="Cache Flow Raporuna ait yuklenecek excel formatini icin tiklayiniz !">
-          <img width="100%" src="../../../../../../assets/images/Reports-App-Juniper-Excel-Format.png">
-        </p-accordionTab>
-      </p-accordion>
-      <p-toast></p-toast>
-    
-      <p-fileUpload name="files" [multiple]="true" accept=".xlsx" [customUpload]="true"
-        (uploadHandler)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)">
-    
-        <ng-template pTemplate="header" let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback"
-          let-uploadCallback="uploadCallback">
-          <div class="flex justify-content-start align-items-center gap-2">
-            <p-button (onClick)="choose($event, chooseCallback)" icon="pi pi-file-excel" [rounded]="true"
-              [outlined]="true"></p-button>
-            <p-button (onClick)="uploadCallback()" icon="pi pi-cloud-upload" [rounded]="true" [outlined]="true"
-              severity="success" [disabled]="files.length === 0"></p-button>
-            <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true" severity="danger"
-              [disabled]="files.length === 0"></p-button>
-          </div>
-    
-        </ng-template>
-    
-        <ng-template pTemplate="content" let-files let-removeFileCallback="removeFileCallback">
-          <div *ngIf="files.length > 0">
-            <div class="flex flex-wrap gap-3">
-              <div *ngFor="let file of files; let i = index"
-                class="card flex flex-column align-items-center justify-content-center p-3">
-                <img [src]="'../../../../../../assets/icons/icon-excel.png'" alt="{{ file.file?.name }}" width="50"
-                  height="50" />
-                <div style="font-size: 42px;">{{ file.file?.name }}</div>
-    
-              </div>
-            </div>
-          </div>
-        </ng-template>
-    
-        <ng-template pTemplate="empty">
-          <div class="flex align-items-center justify-content-center flex-column">
-            <i class="pi pi-cloud-upload border-2 border-circle p-5 text-8xl text-400 border-400"></i>
-            <p class="mt-4 mb-0">Dosyanızı buraya bırakabilirsiniz.</p>
-          </div>
-    
-    
-        </ng-template>
-      </p-fileUpload>
-    </div>
-    
-    <div class="card">
-      <p-table [value]="fileList" [tableStyle]="{ 'min-width': '60rem' }">
-        <ng-template pTemplate="caption">
-          <div class="flex align-items-center justify-content-between">
-            Uploaded Files
-            <p-button icon="pi pi-refresh" (click)="loadUploadedFiles()"></p-button>
-          </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Icon</th>
-            <th>Name</th>
-            <th>Uploaded Date</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-file>
-          <tr>
-            <td>
-              <img [src]="'../../../../../../assets/icons/icon-excel.png'" width="50" height="50" />
-            </td>
-            <td>{{ file.fileName }}</td>
-            <td>{{ file.created }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  
+
+</div>
+
+<div class="card">
+
+
+
+  <p-table [value]="fileList" [tableStyle]="{ 'min-width': '60rem' }" scrollable="true" scrollHeight="250px">
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        Uploaded Files
+        <p-button icon="pi pi-refresh" (click)="loadUploadedFiles()"></p-button>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Icon</th>
+        <th>Name</th>
+        <th>Uploaded Date</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-file>
+      <tr>
+        <td>
+          <img [src]="'../../../../../../assets/icons/icon-excel.png'" width="50" height="50" />
+        </td>
+        <td>{{ file.fileName }}</td>
+        <td>{{ file.created }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

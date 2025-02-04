@@ -10,80 +10,147 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { TagModule } from 'primeng/tag';
+import { CacheFlowService, CacheFlowSupplierReportDatesDto } from '../../../../../core/services/api/cache-flow.service';
+
+
 @Component({
   selector: 'app-cache-flow',
   standalone: true,
-  imports: [DropdownModule, CommonModule,FieldsetModule,TableModule,RadioButtonModule,FormsModule,ButtonModule,ChipModule,TagModule],
+  imports: [DropdownModule, CommonModule, FieldsetModule, TableModule, RadioButtonModule, FormsModule, ButtonModule, ChipModule, TagModule],
   templateUrl: './cache-flow.component.html',
   styleUrl: './cache-flow.component.scss'
 })
 export class CacheFlowComponent implements OnInit {
 
 
-  supplierList: Supplier[] = [];
-  selectedSupplier: Supplier;
+  supplierList: any[] = [];
+  selectedSupplier: any;
 
-  customerList: Customer[] = [];
-  selectedCustomer: Customer;
-
-
-  selectedCacheFlowType: string | null = null;
-
-  dateList:any[]=[];
-  selectedDate:any;
-   sayi: number = 42;
-  totalCustomer=`Total Customer: ${this.sayi}`;
-  totalSupplier=`Total Supplier: ${this.sayi}`;
-  totalBalanceDue=`Total Balance Due: ${1589}`;
-  
+  customerList: any[] = [];
+  selectedCustomer: any ;
 
 
-  constructor(private supplierService:SupplierService,private customerService:CustomerService,private cd: ChangeDetectorRef){}
+  selectedCacheFlowType: string | null = "Customer";
+
+  supplierDateList: CacheFlowSupplierReportDatesDto[] = [];
+  selectedSupplierDate: CacheFlowSupplierReportDatesDto;
+
+
+  customerDateList: CacheFlowSupplierReportDatesDto[] = [];
+  selectedCustomerDate: CacheFlowSupplierReportDatesDto;
+
+  sayi: number = 42;
+  totalCustomer: any;
+  totalSupplier: any;
+
+
+
+  suppliersCacheFlowReports: any[] = [];
+  customersCacheFlowReports: any[] = [];
+
+  totalSupplierBalanceDue: any;
+
+  totalCustomerBalanceDue: any;
+
+
+
+  constructor(private cacheFlowService: CacheFlowService, private customerService: CustomerService, private cd: ChangeDetectorRef) { }
 
 
   ngOnInit(): void {
 
     this.loadSuppliers();
     this.loadCustomers();
-    this.loadDates();
- 
-  }
+    this.loadSupplierDates();
+    this.loadCustomerDates();
 
-  loadSuppliers():void{
-    this.supplierService.getSupplierS().subscribe({
-      next: (data) => (this.supplierList = data),
-      error: (err) => console.error('Error loading room types:', err)
-    });
-  }
-
-  loadCustomers():void{
-    this.customerService.getCustomers().subscribe({
-      next: (data) => (this.customerList = data),
-      error: (err) => console.error('Error loading room types:', err)
-    });
-  }
-
-  loadDates(){
-    this.dateList=[
-      {date:"01.01.2025-30.01.2025"},
-      {date:"01.02.2025-30.02.2025"},
-      {date:"01.03.2025-30.03.2025"},
-      {date:"01.04.2025-30.04.2025"},
-      {date:"01.05.2025-30.05.2025"},
     
-    ]
-  }
-
-  getData(){
 
   }
 
-  resetSelections(){
+  loadSuppliers(): void {
+    this.cacheFlowService.getSuppliers().subscribe({
+      next: (result) => {
+        this.supplierList = result.data;
+        this.totalSupplier = result.totalCount;
+        console.log(result.data);
+
+      },
+      error: (err) => console.error('Error loading supplierList:', err)
+    });
+  }
+
+  loadCustomers(): void {
+    this.cacheFlowService.getCustomers().subscribe({
+      next: (result) => {
+        this.customerList = result.data;
+        this.totalCustomer = result.totalCount;
+        console.log();
+
+      },
+      error: (err) => console.error('Error loading customerList:', err)
+    });
+  }
+
+  loadSupplierDates() {
+    this.cacheFlowService.getSupplierDates().subscribe({
+      next: (result) => {
+        this.supplierDateList = result
+        console.log(this.supplierDateList);
+
+      },
+      error: (err) => console.error('Error loading customerList:', err)
+    });
+  }
+
+  loadCustomerDates() {
+    this.cacheFlowService.getCustomerDates().subscribe({
+      next: (result) => {
+        this.customerDateList = result;
+        console.log(this.customerDateList);
+
+      },
+      error: (err) => console.error('Error loading customerList:', err)
+    });
+  }
+
+  getData() {
+    console.log(this.selectedCustomerDate);
+    console.log(this.selectedCacheFlowType);
+
+    if (this.selectedCacheFlowType == "Customer") {
+      this.cacheFlowService.getCustomersCacheFlowReports(this.selectedCustomer.id, this.selectedCustomerDate.reportStartEndDate).subscribe({
+        next: (result) => {
+          console.log(result);
+
+          this.customersCacheFlowReports = result.data;
+          this.totalCustomerBalanceDue = result.totalBalanceDue;
+
+        },
+        error: (err) => console.error('Error loading customerList:', err)
+      });
+    }
+    if (this.selectedCacheFlowType == "Supplier") {
+      this.cacheFlowService.getSuppliersCacheFlowReports(this.selectedSupplier.id, this.selectedSupplierDate.reportStartEndDate).subscribe({
+        next: (result) => {
+          console.log(result);
+
+          this.suppliersCacheFlowReports = result.data;
+          this.totalSupplierBalanceDue = result.totalBalanceDue;
+
+        },
+        error: (err) => console.error('Error loading customerList:', err)
+      });
+    }
+
+  }
+
+  resetSelections() {
     console.log('Reset fonksiyonu çağrıldı');
     this.selectedCacheFlowType = undefined;
     this.selectedSupplier = null;
     this.selectedCustomer = null;
-    this.selectedDate = null;
+
     this.cd.detectChanges(); // Değişiklikleri bildiriyoruz.
   }
 }

@@ -5,7 +5,7 @@
 
 
 
-        <p-fieldset legend="Info" [toggleable]="true">
+        <p-fieldset legend="Ofen For Information" [toggleable]="true" [collapsed]="true">
             <div class="grid">
                 <div class="col-12 xl:col-6">
                     <p-fieldset legend="Suppliers" [toggleable]="false">
@@ -20,12 +20,13 @@
                             <ng-template pTemplate="body" let-supplier>
                                 <tr>
                                     <td>{{ supplier.name }}</td>
-                                    <td>{{ supplier.paymentRule }}</td>
+                                    <td>{{ supplier.rule }}</td>
 
 
                                 </tr>
                             </ng-template>
                         </p-table>
+                        <p-tag severity="success" [value]="totalSupplier" />
                     </p-fieldset>
 
                 </div>
@@ -43,22 +44,20 @@
                             <ng-template pTemplate="body" let-customer>
                                 <tr>
                                     <td>{{ customer.name }}</td>
-                                    <td>{{ customer.paymentRule }}</td>
+                                    <td>{{ customer.rule }}</td>
 
 
                                 </tr>
                             </ng-template>
                         </p-table>
+                        <p-tag severity="danger" [value]="totalCustomer" />
+
                     </p-fieldset>
                 </div>
             </div>
         </p-fieldset>
 
-        <div class="mt-5 p-3">
-            <p-tag severity="success" [value]="totalSupplier" />
-            <p-tag severity="danger" [value]="totalCustomer" />
-            <p-tag severity="warning" [value]="totalBalanceDue" />
-        </div>
+
 
 
     </div>
@@ -67,56 +66,63 @@
     <!-- Select Customer Or Supplier -->
     <div class="card flex">
         <div class="flex flex-wrap gap-3">
-          <div class="flex align-items-center">
-            <p-radioButton name="type" value="Supplier" [(ngModel)]="selectedCacheFlowType" inputId="1" />
-            <label for="1" class="ml-2">
-              Supplier
-            </label>
-          </div>
-      
-          <div class="flex align-items-center">
-            <p-radioButton name="type" value="Customer" [(ngModel)]="selectedCacheFlowType" inputId="2" />
-            <label for="3" class="ml-2">
-              Customer
-            </label>
-          </div>
-      
-          <div *ngIf="selectedCacheFlowType==null" class="flex align-items-center">
-            <p-button label="Get All Data" (onClick)="getData()" />
-          </div>
-      
-          <div *ngIf="selectedCacheFlowType === 'Supplier'" class="flex align-items-center">
-            <p-dropdown [options]="supplierList" [(ngModel)]="selectedSupplier" optionLabel="name"
-              placeholder="Select a Supplier" />
-          </div>
-      
-          <div *ngIf="selectedCacheFlowType === 'Customer'" class="flex align-items-center">
-            <p-dropdown [options]="customerList" [(ngModel)]="selectedCustomer" optionLabel="name"
-              placeholder="Select a Customer" />
-          </div>
-      
-          <div *ngIf="selectedCacheFlowType != null" class="flex align-items-center">
-            <p-dropdown [options]="dateList" [(ngModel)]="selectedDate" optionLabel="date"
-              placeholder="Select a Date" />
-          </div>
-      
-          <div *ngIf="selectedCacheFlowType != null" class="flex align-items-center">
-            <p-button label="Get Data" (onClick)="getData()" />
-          </div>
-      
-          <!-- Secimleri Sifirla butonunu sağa yaslamak için ml-auto ekliyoruz -->
-          <div *ngIf="selectedCacheFlowType != null" class="sifirla ml-auto">
-            <p-button label="Reset filter"  [severity]="'warning'"  (onClick)="resetSelections()" />
-          </div>
-      
+            <div class="flex align-items-center">
+                <p-radioButton name="type" value="Supplier" [(ngModel)]="selectedCacheFlowType" inputId="1" />
+                <label for="1" class="ml-2">
+                    Supplier
+                </label>
+            </div>
+
+            <div class="flex align-items-center">
+                <p-radioButton name="type" value="Customer" [(ngModel)]="selectedCacheFlowType" inputId="2" />
+                <label for="3" class="ml-2">
+                    Customer
+                </label>
+            </div>
+
+            <!-- <div *ngIf="selectedCacheFlowType==null" class="flex align-items-center">
+                <p-button label="Get All Data" (onClick)="getData()" />
+            </div> -->
+
+            <div *ngIf="selectedCacheFlowType === 'Supplier'" class="flex align-items-center">
+                <p-dropdown [options]="supplierList" [(ngModel)]="selectedSupplier" optionLabel="name"
+                    placeholder="Select a Supplier" />
+            </div>
+
+            <div *ngIf="selectedCacheFlowType === 'Customer'" class="flex align-items-center">
+                <p-dropdown [options]="customerList" [(ngModel)]="selectedCustomer" optionLabel="name"
+                    placeholder="Select a Customer" />
+            </div>
+
+
+            <div *ngIf="selectedCacheFlowType === 'Supplier'" class="flex align-items-center">
+                <p-dropdown [options]="supplierDateList" [(ngModel)]="selectedSupplierDate"
+                    optionLabel="reportStartEndDate" placeholder="Select a Supplier Date" />
+            </div>
+
+            <div *ngIf="selectedCacheFlowType === 'Customer'" class="flex align-items-center">
+                <p-dropdown [options]="customerDateList" [(ngModel)]="selectedCustomerDate"
+                    optionLabel="reportStartEndDate" placeholder="Select a Customer Date" />
+            </div>
+
+
+            <div *ngIf="selectedCacheFlowType != null" class="flex align-items-center">
+                <p-button label="Get Data" (onClick)="getData()" />
+            </div>
+
+            <!-- Secimleri Sifirla butonunu sağa yaslamak için ml-auto ekliyoruz -->
+            <div *ngIf="selectedCacheFlowType != null" class="sifirla ml-auto">
+                <p-button label="Reset filter" [severity]="'warning'" (onClick)="resetSelections()" />
+            </div>
+
         </div>
-      </div>
-      
+    </div>
 
-    <div *ngIf="selectedCacheFlowType != null" class="grid">
-        <div class="col-12 xl:col-6">
 
-            <p-table [value]="supplierList" scrollable="true" scrollHeight="20rem">
+    <div *ngIf="selectedCacheFlowType =='Supplier'" class="grid">
+        <div class="col-12 xl:col-12 report-container">
+
+            <p-table [value]="suppliersCacheFlowReports" scrollable="true" scrollHeight="20rem">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Booking Code</th>
@@ -130,28 +136,100 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-supplier>
                     <tr>
-                        <td>{{ supplier.name }}</td>
-                        <td>{{ supplier.paymentRule }}</td>
-                        <td>{{ supplier.paymentRule }}</td>
-                        <td>{{ supplier.paymentRule }}</td>
-                        <td>{{ supplier.paymentRule }}</td>
-                        <td>{{ supplier.paymentRule }}</td>
+                        <td>{{ supplier.bookingCode }}</td>
+                        <td>{{ supplier.description }}</td>
+                        <td>{{ supplier.bookingDate }}</td>
+                        <td>{{ supplier.travelStartDate }}</td>
+                        <td>{{ supplier.travelEndDate }}</td>
+                        <td>{{ supplier.balanceDue }}</td>
 
 
                     </tr>
                 </ng-template>
             </p-table>
 
-            <div class="mt-5">
-                <p-tag severity="success" [value]="totalSupplier" />
-                <p-tag severity="danger" [value]="totalCustomer" />
-                <p-tag severity="warning" [value]="totalBalanceDue" />
-            </div>
+            <div class="balance-card" [ngClass]="{'low': totalSupplierBalanceDue < 500, 'medium': totalSupplierBalanceDue >= 500 && totalSupplierBalanceDue < 1000, 'high': totalSupplierBalanceDue >= 1000}">
+                <div class="balance-details">
+                  <h2>Total Balance Due</h2>
+                  <p class="balance-amount">{{ totalSupplierBalanceDue | currency: 'EUR' }}</p>
+                </div>
+
+                <div class="additional-info">
+                    <div class="customer-info">
+                      <h3>Supplier:</h3>
+                      <p>{{ selectedSupplier?.name  }}</p>
+                    </div>
+                    <div class="date-info">
+                      <h3>Date:</h3>
+                      <p>{{ selectedSupplierDate?.reportStartEndDate  }}</p>
+                    </div>
+                  </div>
+              
+              </div>
+
         </div>
-       
+
         <div class="col-12 xl:col-6">
 
         </div>
     </div>
+
+
+    <div *ngIf="selectedCacheFlowType =='Customer'" class="grid">
+        <div class="col-12 xl:col-12 report-container">
+
+            <p-table [value]="customersCacheFlowReports" scrollable="true" scrollHeight="20rem">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Booking Code</th>
+                        <th>Description</th>
+                        <th>Booking Date</th>
+                        <th>Travel Start</th>
+                        <th>Travel End</th>
+                        <th>Balance Due</th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-customer>
+                    <tr>
+                        <td>{{ customer.bookingCode }}</td>
+                        <td>{{ customer.description }}</td>
+                        <td>{{ customer.bookingDate }}</td>
+                        <td>{{ customer.travelStartDate }}</td>
+                        <td>{{ customer.travelEndDate }}</td>
+                        <td>{{ customer.balanceDue | currency: 'EUR'}}</td>
+
+
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="balance-card" [ngClass]="{'low': totalCustomerBalanceDue < 500, 'medium': totalCustomerBalanceDue >= 500 && totalCustomerBalanceDue < 1000, 'high': totalCustomerBalanceDue >= 1000}">
+                <div class="balance-details">
+                  <h2>Total Balance Due</h2>
+                  <p class="balance-amount">{{ totalCustomerBalanceDue | currency: 'EUR' }}</p>
+                </div>
+
+                <div class="additional-info">
+                    <div class="customer-info">
+                      <h3>Customer:</h3>
+                      <p>{{ selectedCustomer?.name  }}</p>
+                    </div>
+                    <div class="date-info">
+                      <h3>Date:</h3>
+                      <p>{{ selectedCustomerDate?.reportStartEndDate  }}</p>
+                    </div>
+                  </div>
+              
+              </div>
+
+
+           
+        </div>
+
+        <div class="col-12 xl:col-6">
+
+        </div>
+    </div>
+
 
 </div>
